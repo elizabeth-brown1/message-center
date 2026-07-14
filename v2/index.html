@@ -83,39 +83,49 @@
 
     <div class="flex flex-col min-h-screen bg-white">
         <!-- Preview Warning Banner (Yellow 300) -->
-        <div id="preview-banner" class="bg-yellow-300 border-b border-yellow-400 text-slate-950 px-6 py-3 flex items-center justify-between gap-4 z-50 shrink-0 text-xs font-semibold shadow-sm">
+        <div id="preview-banner"
+            class="bg-yellow-300 border-b border-yellow-400 text-slate-950 px-6 py-3 flex items-center justify-between gap-4 z-50 shrink-0 text-xs font-semibold shadow-sm">
             <div class="flex items-center gap-2.5">
-                <svg class="w-4 h-4 text-yellow-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                <svg class="w-4 h-4 text-yellow-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                    </path>
                 </svg>
                 <span>
-                    <strong>Viewing in Preview Mode?</strong> For the full interactive experience and functioning spreadsheet exports, please download the <strong>entire v2 folder</strong> to your computer, right-click <code>index.html</code>, and select <strong>Open With &rarr; Google Chrome</strong> or <strong>Safari</strong>.
+                    <strong>Viewing in Preview Mode?</strong> For the full interactive experience and functioning
+                    spreadsheet exports, please download the <strong>entire v2 folder</strong> to your computer,
+                    right-click <code>index.html</code>, and select <strong>Open With &rarr; Google Chrome</strong> or
+                    <strong>Safari</strong>.
                 </span>
             </div>
-            <button onclick="document.getElementById('preview-banner').classList.add('hidden')" class="text-yellow-800 hover:text-yellow-950 hover:bg-yellow-400/50 p-1.5 rounded-full transition-colors focus:outline-none" aria-label="Dismiss banner">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <button onclick="document.getElementById('preview-banner').classList.add('hidden')"
+                class="text-yellow-800 hover:text-yellow-950 hover:bg-yellow-400/50 p-1.5 rounded-full transition-colors focus:outline-none"
+                aria-label="Dismiss banner">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
 
         <script>
-            // Inline check to immediately hide banner if in a full web browser environment
-            (function() {
-                let isPreviewMode = false;
-                try {
-                    if (window.self !== window.top) {
+                // Inline check to immediately hide banner if in a full web browser environment
+                (function () {
+                    let isPreviewMode = false;
+                    try {
+                        if (window.self !== window.top) {
+                            isPreviewMode = true;
+                        }
+                        localStorage.setItem('__test_preview__', '1');
+                        localStorage.removeItem('__test_preview__');
+                    } catch (e) {
                         isPreviewMode = true;
                     }
-                    localStorage.setItem('__test_preview__', '1');
-                    localStorage.removeItem('__test_preview__');
-                } catch (e) {
-                    isPreviewMode = true;
-                }
-                if (!isPreviewMode) {
-                    document.getElementById('preview-banner').style.display = 'none';
-                }
-            })();
+                    if (!isPreviewMode) {
+                        document.getElementById('preview-banner').style.display = 'none';
+                    }
+                })();
         </script>
 
         <!-- Main Workspace -->
@@ -125,7 +135,7 @@
                 class="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between gap-4 shrink-0">
                 <div class="flex items-center gap-5">
                     <h1 class="text-l font-semibold text-slate-500 tracking-loose">PowerSchool Logged Messages
-                        <br>AZVA and ISAZ (SY25-26) | Population: 3,646 Students (Proxy for 3,646 LC Households)
+                        <br>AZVA and ISAZ (SY25-26) | Population: 3,646 Students (Proxy for LC Households)
                     </h1>
                 </div>
 
@@ -133,27 +143,36 @@
                 <div class="relative group">
                     <a href="./full_dataset_no_PII.xlsx" download="full_dataset_no_PII.xlsx"
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 focus:ring-offset-white text-sm"
-                        aria-label="Export Full Dataset - Click here to download an Excel of the full dataset (100,019 messages)"
+                        aria-label="Export Full Dataset - Click here to download an Excel of the full No-PII dataset (100,019 messages)"
                         tabindex="0">
                         <!-- Excel/Download Icon -->
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
                         <span>Export Full Dataset</span>
                     </a>
                     <!-- Custom Premium Tooltip -->
-                    <div class="absolute right-0 top-full mt-2 w-72 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none border border-slate-800">
+                    <div
+                        class="absolute right-0 top-full mt-2 w-72 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none border border-slate-800">
                         <div class="font-bold mb-1 flex items-center gap-1.5 text-green-400">
-                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"></path>
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Excel Spreadsheet (.xlsx)
                         </div>
-                        <p class="text-slate-300 leading-relaxed">Click here to download an Excel of the full dataset containing <strong>100,019 messages</strong>.</p>
-                        <div class="mt-2 text-[10px] text-slate-400 italic">Includes log types, weekdays, and monthly breakdown histories.</div>
+                        <p class="text-slate-300 leading-relaxed">Click here to download an Excel of the full dataset
+                            containing <strong>100,019 messages</strong>.</p>
+                        <div class="mt-2 text-[10px] text-slate-400 italic">Includes log types, weekdays, and monthly
+                            breakdown histories.</div>
                         <!-- Arrow -->
-                        <div class="absolute right-6 -top-1 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-slate-800"></div>
+                        <div
+                            class="absolute right-6 -top-1 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-slate-800">
+                        </div>
                     </div>
                 </div>
             </header>
@@ -161,8 +180,7 @@
             <!-- Dashboard Content Pane -->
             <div id="tab-dashboard" class="flex-1 overflow-hidden px-8 pb-3 pt-8 flex flex-col bg-white">
                 <!-- Unified Dual-Pane Explorer Box -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch h-[calc(100vh-10rem)] min-h-[520px]"
-                    >
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch h-[calc(100vh-10rem)] min-h-[520px]">
 
                     <!-- Left Pane: Consolidated Log Statistics -->
                     <div
@@ -179,7 +197,8 @@
                         <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl"
                             id="log-type-section" onmouseenter="selectDashSubtype(activeLogTypeIndex);">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by log type</h4>
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
+                                    log type</h4>
                             </div>
                             <div class="overflow-x-auto max-w-md">
                                 <table class="w-full text-left text-xs border-collapse">
@@ -247,7 +266,8 @@
                         <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
                             id="weekday-breakdown-section" onmouseenter="showWeekdayVolumeChart();">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by weekday</h4>
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
+                                    weekday</h4>
                             </div>
                             <div class="overflow-x-auto max-w-md">
                                 <table class="w-full text-left text-xs border-collapse">
@@ -309,12 +329,14 @@
                         <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
                             id="monthly-breakdown-section" onmouseenter="showMonthlyVolumeChart();">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by month</h4>
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
+                                    month</h4>
                             </div>
                             <div class="overflow-x-auto max-w-md">
                                 <table class="w-full text-left text-xs border-collapse">
                                     <thead>
-                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold sticky top-0 bg-white">
+                                        <tr
+                                            class="border-b border-slate-200 text-slate-500 font-semibold sticky top-0 bg-white">
                                             <th class="pb-2 font-semibold">Month</th>
                                             <th class="pb-2 font-semibold text-right">Volume</th>
                                             <th class="pb-2 font-semibold text-right">% of messages</th>
@@ -390,7 +412,8 @@
                         <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
                             id="lc-annual-section" onmouseenter="showLCAnnualChart();">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC messages by School Year</h4>
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC
+                                    messages by School Year</h4>
                             </div>
                             <div class="overflow-x-auto max-w-md">
                                 <table class="w-full text-left text-xs border-collapse">
@@ -438,7 +461,8 @@
                         <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
                             id="lc-subtype-section" onmouseenter="showLCSubtypeChart();">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC messages by subtype</h4>
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC
+                                    messages by subtype</h4>
                             </div>
                             <div class="overflow-x-auto max-w-md">
                                 <table class="w-full text-left text-xs border-collapse">
@@ -515,7 +539,21 @@
                 <!-- Footer Signature -->
                 <footer class="flex justify-end items-center mt-2.5">
                     <span class="text-[9px] text-slate-400 tracking-tight select-none">
-                        Insights provided by <span onclick="copyEmailToClipboard(this)" class="group relative inline-block hover:text-sky-500 text-slate-400 transition-colors font-medium cursor-pointer"><span>ebrown1@k12.com</span><div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-sans font-bold px-2 py-1 rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none flex items-center gap-1.5 z-50 whitespace-nowrap"><span>Copy</span><svg class="w-2.5 h-2.5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg><div class="absolute top-full left-1/2 -translate-x-1/2 w-1 h-1 bg-slate-900 rotate-45 -mt-0.5"></div></div></span>, UXR
+                        Insights provided by <span onclick="copyEmailToClipboard(this)"
+                            class="group relative inline-block hover:text-sky-500 text-slate-400 transition-colors font-medium cursor-pointer"><span>ebrown1@k12.com</span>
+                            <div
+                                class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-sans font-bold px-2 py-1 rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none flex items-center gap-1.5 z-50 whitespace-nowrap">
+                                <span>Copy</span><svg class="w-2.5 h-2.5 text-slate-300" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                </svg>
+                                <div
+                                    class="absolute top-full left-1/2 -translate-x-1/2 w-1 h-1 bg-slate-900 rotate-45 -mt-0.5">
+                                </div>
+                            </div>
+                        </span>, UXR
                     </span>
                 </footer>
             </div>
@@ -595,7 +633,7 @@
                 container.className = "h-64 w-[360px] relative flex justify-start";
             }
 
-            
+
 
             // Ensure subtype table is visible
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
@@ -679,18 +717,18 @@
                     plugins: {
                         legend: {
                             position: "bottom",
-                                labels: {
-                                    boxWidth: 12,
-                                    font: { size: 11, weight: "500" },
-                                    color: "#334155"
-                                }                      
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11, weight: "500" },
+                                color: "#334155"
+                            }
                         }
                     }
                 }
             });
         }
 
-        
+
         function clearLogTypeHighlights() {
             for (let i = 0; i < 6; i++) {
                 const row = document.getElementById("logtype-row-" + i);
@@ -956,7 +994,7 @@
             });
         }
 
-        
+
 
         function copyEmailToClipboard(el) {
             const email = "ebrown1@k12.com";
