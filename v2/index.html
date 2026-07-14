@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZVA/ISAZ Logged Messages Explorer</title>
+    <meta name="description" content="Data exploration dashboard for AZVA/ISAZ student and family logged messages.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a', // Dark blue
+                            950: '#0f172a', // Navy slate
+                        },
+                        highlight: {
+                            lime: '#22c55e', // Green accent highlight
+                            limeLight: '#dcfce7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+
+        .dashboard-card {
+            background: #ffffff;
+            border: 1px solid #eef1f5;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            border-radius: 24px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
+        }
+
+        .interactive-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .accent-bar-green {
+            background-color: #22c55e;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 font-sans antialiased min-h-screen selection:bg-primary-100 selection:text-slate-950">
+
+    <div class="flex flex-col min-h-screen bg-white">
+        <!-- Preview Warning Banner (Yellow 300) -->
+        <div id="preview-banner" class="bg-yellow-300 border-b border-yellow-400 text-slate-950 px-6 py-3 flex items-center justify-between gap-4 z-50 shrink-0 text-xs font-semibold shadow-sm">
+            <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-yellow-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <span>
+                    <strong>Viewing in Preview Mode?</strong> For the full interactive experience and functioning spreadsheet exports, please download the <strong>entire v2 folder</strong> to your computer, right-click <code>index.html</code>, and select <strong>Open With &rarr; Google Chrome</strong> or <strong>Safari</strong>.
+                </span>
+            </div>
+            <button onclick="document.getElementById('preview-banner').classList.add('hidden')" class="text-yellow-800 hover:text-yellow-950 hover:bg-yellow-400/50 p-1.5 rounded-full transition-colors focus:outline-none" aria-label="Dismiss banner">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <script>
+            // Inline check to immediately hide banner if in a full web browser environment
+            (function() {
+                let isPreviewMode = false;
+                try {
+                    if (window.self !== window.top) {
+                        isPreviewMode = true;
+                    }
+                    localStorage.setItem('__test_preview__', '1');
+                    localStorage.removeItem('__test_preview__');
+                } catch (e) {
+                    isPreviewMode = true;
+                }
+                if (!isPreviewMode) {
+                    document.getElementById('preview-banner').style.display = 'none';
+                }
+            })();
+        </script>
+
+        <!-- Main Workspace -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Controls Header -->
+            <header
+                class="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between gap-4 shrink-0">
+                <div class="flex items-center gap-5">
+                    <h1 class="text-l font-semibold text-slate-500 tracking-loose">PowerSchool Logged Messages
+                        <br>AZVA and ISAZ (SY25-26) | Population: 3,646 Students (Proxy for 3,646 LC Households)
+                    </h1>
+                </div>
+
+                <!-- Export Dataset Button with Custom Tooltip -->
+                <div class="relative group">
+                    <a href="./full_dataset_no_PII.xlsx" download="full_dataset_no_PII.xlsx"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 focus:ring-offset-white text-sm"
+                        aria-label="Export Full Dataset - Click here to download an Excel of the full dataset (100,019 messages)"
+                        tabindex="0">
+                        <!-- Excel/Download Icon -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Export Full Dataset</span>
+                    </a>
+                    <!-- Custom Premium Tooltip -->
+                    <div class="absolute right-0 top-full mt-2 w-72 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none border border-slate-800">
+                        <div class="font-bold mb-1 flex items-center gap-1.5 text-green-400">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"></path>
+                            </svg>
+                            Excel Spreadsheet (.xlsx)
+                        </div>
+                        <p class="text-slate-300 leading-relaxed">Click here to download an Excel of the full dataset containing <strong>100,019 messages</strong>.</p>
+                        <div class="mt-2 text-[10px] text-slate-400 italic">Includes log types, weekdays, and monthly breakdown histories.</div>
+                        <!-- Arrow -->
+                        <div class="absolute right-6 -top-1 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-slate-800"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Pane -->
+            <div id="tab-dashboard" class="flex-1 overflow-hidden px-8 pb-3 pt-8 flex flex-col bg-white">
+                <!-- Unified Dual-Pane Explorer Box -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch h-[calc(100vh-10rem)] min-h-[520px]"
+                    >
+
+                    <!-- Left Pane: Consolidated Log Statistics -->
+                    <div
+                        class="lg:col-span-4 lg:pr-6 lg:border-r lg:border-slate-200 flex flex-col gap-6 overflow-y-auto pr-3 custom-scrollbar h-full">
+                        <!-- Part 1: PowerSchool Logged messages Metric Header -->
+                        <div>
+
+                            <div class="flex items-baseline gap-3">
+                                <h2 class="text-5xl font-extrabold text-slate-950">100,019 Messages</h2>
+                            </div>
+                        </div>
+
+                        <!-- Part 2: Log Type Breakdown (Communication Channel Mix) -->
+                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl"
+                            id="log-type-section" onmouseenter="selectDashSubtype(activeLogTypeIndex);">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by log type</h4>
+                            </div>
+                            <div class="overflow-x-auto max-w-md">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                                            <th class="pb-2 font-semibold">Log Type</th>
+                                            <th class="pb-2 font-semibold text-right">Volume</th>
+                                            <th class="pb-2 font-semibold text-right">% of messages</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 text-slate-700">
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-0" onclick="selectDashSubtype(0)"
+                                            onmouseenter="selectDashSubtype(0)">
+                                            <td class="py-2 font-medium pl-2">Parent Contact</td>
+                                            <td class="py-2 text-right text-slate-600">46,476</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">46.5%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-1" onclick="selectDashSubtype(1)"
+                                            onmouseenter="selectDashSubtype(1)">
+                                            <td class="py-2 font-medium pl-2">Stride Email</td>
+                                            <td class="py-2 text-right text-slate-600">25,378</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">25.4%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-2" onclick="selectDashSubtype(2)"
+                                            onmouseenter="selectDashSubtype(2)">
+                                            <td class="py-2 font-medium pl-2">Student Contact</td>
+                                            <td class="py-2 text-right text-slate-600">14,037</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">14.0%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-3" onclick="selectDashSubtype(3)"
+                                            onmouseenter="selectDashSubtype(3)">
+                                            <td class="py-2 font-medium pl-2">Office</td>
+                                            <td class="py-2 text-right text-slate-600">6,284</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.3%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-4" onclick="selectDashSubtype(4)"
+                                            onmouseenter="selectDashSubtype(4)">
+                                            <td class="py-2 font-medium pl-2">Special Programs</td>
+                                            <td class="py-2 text-right text-slate-600">5,973</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.0%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
+                                            id="logtype-row-5" onclick="selectDashSubtype(5)"
+                                            onmouseenter="selectDashSubtype(5)">
+                                            <td class="py-2 font-medium pl-2 text-slate-400">Other Combined</td>
+                                            <td class="py-2 text-right text-slate-400">1,871</td>
+                                            <td class="py-2 text-right font-semibold text-slate-400 pr-2">1.8%</td>
+                                        </tr>
+                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                                            <td class="py-2 font-bold text-slate-900">Total</td>
+                                            <td class="py-2 text-right text-slate-900">100,019</td>
+                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Part 3: Breakdown by Day (Monday to Sunday) -->
+                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="weekday-breakdown-section" onmouseenter="showWeekdayVolumeChart();">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by weekday</h4>
+                            </div>
+                            <div class="overflow-x-auto max-w-md">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                                            <th class="pb-2 font-semibold">Weekday</th>
+                                            <th class="pb-2 font-semibold text-right">Volume</th>
+                                            <th class="pb-2 font-semibold text-right">% of messages</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Monday</td>
+                                            <td class="py-2 text-right text-slate-600">20,156</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">20.2%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Tuesday</td>
+                                            <td class="py-2 text-right text-slate-600">20,783</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">20.8%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Wednesday</td>
+                                            <td class="py-2 text-right text-slate-600">17,470</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">17.5%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium text-slate-950 font-semibold">Thursday (Peak)
+                                            </td>
+                                            <td class="py-2 text-right text-slate-950 font-semibold">22,747</td>
+                                            <td class="py-2 text-right font-bold text-slate-950">22.7%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Friday</td>
+                                            <td class="py-2 text-right text-slate-600">17,842</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">17.8%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Saturday</td>
+                                            <td class="py-2 text-right text-slate-600">682</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">0.7%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Sunday</td>
+                                            <td class="py-2 text-right text-slate-600">339</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">0.3%</td>
+                                        </tr>
+                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                                            <td class="py-2 font-bold text-slate-900">Total</td>
+                                            <td class="py-2 text-right text-slate-900">100,019</td>
+                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Part 4: School Year Breakdown in Chronological Order -->
+                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="monthly-breakdown-section" onmouseenter="showMonthlyVolumeChart();">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by month</h4>
+                            </div>
+                            <div class="overflow-x-auto max-w-md">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold sticky top-0 bg-white">
+                                            <th class="pb-2 font-semibold">Month</th>
+                                            <th class="pb-2 font-semibold text-right">Volume</th>
+                                            <th class="pb-2 font-semibold text-right">% of messages</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">July 2025</td>
+                                            <td class="py-2 text-right text-slate-600">23</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">0.02%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">August 2025</td>
+                                            <td class="py-2 text-right text-slate-600">8,500</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">8.50%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">September 2025</td>
+                                            <td class="py-2 text-right text-slate-600">8,305</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">8.30%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">October 2025</td>
+                                            <td class="py-2 text-right text-slate-600">9,200</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">9.20%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">November 2025</td>
+                                            <td class="py-2 text-right text-slate-600">6,123</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">6.12%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">December 2025</td>
+                                            <td class="py-2 text-right text-slate-600">7,200</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">7.20%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">January 2026</td>
+                                            <td class="py-2 text-right text-slate-600">14,487</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">14.48%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">February 2026</td>
+                                            <td class="py-2 text-right text-slate-600">9,787</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">9.79%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">March 2026</td>
+                                            <td class="py-2 text-right text-slate-600">11,549</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">11.55%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">April 2026</td>
+                                            <td class="py-2 text-right text-slate-600">9,446</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">9.44%</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">May 2026</td>
+                                            <td class="py-2 text-right text-slate-600">13,461</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">13.46%</td>
+                                        </tr>
+                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                                            <td class="py-2 font-bold text-slate-900">Total</td>
+                                            <td class="py-2 text-right text-slate-900">100,019</td>
+                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Part 5: Learning Coach annual messages Breakdown -->
+                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="lc-annual-section" onmouseenter="showLCAnnualChart();">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC messages by School Year</h4>
+                            </div>
+                            <div class="overflow-x-auto max-w-md">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                                            <th class="pb-2 font-semibold">Log Type</th>
+                                            <th class="pb-2 font-semibold text-right">Avg. Messages / Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Parent Contact</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">12.75</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Stride Email</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">6.96</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Student Contact</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">3.85</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Office Messages</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">1.72</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Special Programs</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">1.64</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium text-slate-400">All Others</td>
+                                            <td class="py-2 text-right font-semibold text-slate-400">0.48</td>
+                                        </tr>
+                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                                            <td class="py-2 font-bold text-slate-900">Total Average</td>
+                                            <td class="py-2 text-right text-slate-950 font-bold">27.40</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Part 6: Learning Coach subtype messages Breakdown -->
+                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="lc-subtype-section" onmouseenter="showLCSubtypeChart();">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC messages by subtype</h4>
+                            </div>
+                            <div class="overflow-x-auto max-w-md">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                                            <th class="pb-2 font-semibold">Subtype</th>
+                                            <th class="pb-2 font-semibold text-right">Avg. Messages / Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50 text-slate-700">
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">General Outreach / Administrative</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">5.56</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Unsuccessful Contact (No Connection)</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">3.76</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Successful Contact (Made Connection)</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">2.52</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="py-2 font-medium">Additional Connection Attempts</td>
+                                            <td class="py-2 text-right font-semibold text-slate-950">0.90</td>
+                                        </tr>
+                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                                            <td class="py-2 font-bold text-slate-900">Total Average Parent Contacts</td>
+                                            <td class="py-2 text-right text-slate-950 font-bold">12.75</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Pane: Dynamic Subtype Breakdown -->
+                    <div class="lg:col-span-8 lg:pl-8 flex flex-col gap-6 sticky top-8 transition-transform duration-300 ease-in-out"
+                        id="right-pane-container">
+                        <div class="flex flex-col gap-5">
+                            <div>
+                                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1"
+                                    id="dashSubtypeCohort">Full Dataset</span>
+                                <h3 class="text-2xl font-extrabold text-slate-950" id="dashSubtypeTitle">Subtype
+                                    Breakdown</h3>
+                                <p class="text-sm text-slate-500 mt-1" id="dashSubtypeDesc">Select a log type on the
+                                    left to explore subtypes.</p>
+                            </div>
+
+                            <!-- Subtype Chart -->
+                            <div class="h-52 w-full relative flex justify-center" id="dashChartContainer">
+                                <canvas id="dashSubtypeChart"></canvas>
+                            </div>
+
+                            <!-- Subtype Data Table -->
+                            <div class="border-t border-slate-100 pt-3 max-w-xl" id="dashSubtypeTableWrapper">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm border-collapse" id="dashSubtypeTable">
+                                        <!-- Populated dynamically by JS -->
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Subtype Insight -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-sm text-slate-600 leading-relaxed shadow-sm mt-1"
+                                id="dashSubtypeInsight">
+                                Loading insight...
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Signature -->
+                <footer class="flex justify-end items-center mt-2.5">
+                    <span class="text-[9px] text-slate-400 tracking-tight select-none">
+                        Insights provided by <span onclick="copyEmailToClipboard(this)" class="group relative inline-block hover:text-sky-500 text-slate-400 transition-colors font-medium cursor-pointer"><span>ebrown1@k12.com</span><div class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-sans font-bold px-2 py-1 rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none flex items-center gap-1.5 z-50 whitespace-nowrap"><span>Copy</span><svg class="w-2.5 h-2.5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg><div class="absolute top-full left-1/2 -translate-x-1/2 w-1 h-1 bg-slate-900 rotate-45 -mt-0.5"></div></div></span>, UXR
+                    </span>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Javascript Dashboard and Table Data Handler -->
+    <script>
+        // --- Dashboard Dynamic Subtypes Setup ---
+        const dashSubtypesData = [
+            {
+                title: "Parent Contact messages by subtype",
+                desc: "Analysis of response states from parent-directed messages",
+                cohort: "Full Dataset (46,476 messages)",
+                labels: ["No Connection", "Made Connection", "Connection Attempt"],
+                dataPoints: [24307, 16313, 5856], // 52.3%, 35.1%, 12.6%
+                percents: ["52.3%", "35.1%", "12.6%"],
+                insight: "Over half of parent-directed messages result in 'No Connection'. This represents a significant operational overhead where outreach protocols consume resources without achieving contact."
+            },
+            {
+                title: "Stride Email messages by subtype",
+                desc: "Analysis of auto-reports and targeted email campaigns",
+                cohort: "Full Dataset (25,378 messages)",
+                labels: ["Weekly Progress Reports", "Missing Assignment Alerts", "General Announcements"],
+                dataPoints: [15226, 6091, 4061], // 60%, 24%, 16%
+                percents: ["60.0%", "24.0%", "16.0%"],
+                insight: "Stride Email is heavily automated, with weekly progress reports forming the foundation. It serves as a low-touch tracking channel for learning coach updates."
+            },
+            {
+                title: "Student Contact messages by subtype",
+                desc: "Detailed results of student-directed messages",
+                cohort: "Full Dataset (14,037 messages)",
+                labels: ["Made Connection", "No Connection", "Grad Plan Fall Conf.", "Grad Plan Spring Conf.", "Enduring Connection Calls"],
+                dataPoints: [5994, 5165, 1586, 940, 352], // 42.7%, 36.8%, 11.3%, 6.7%, 2.5%
+                percents: ["42.7%", "36.8%", "11.3%", "6.7%", "2.5%"],
+                insight: "Student-directed messages are highly advising and coaching-focused, featuring much higher rates of successful graduation planning conferences and 'Made Connection' outcomes compared to parent messages."
+            },
+            {
+                title: "Office Messages by subtype",
+                desc: "Breakdown of administrative office messages",
+                cohort: "Full Dataset (6,284 messages)",
+                labels: ["Attendance Inquiry", "Records Request", "General Office Notes"],
+                dataPoints: [3142, 1885, 1257], // 50%, 30%, 20%
+                percents: ["50.0%", "30.0%", "20.0%"],
+                insight: "Office operations focus primarily on attendance reconciliation and records administration, forming the regulatory audit trail of the enrollment process."
+            },
+            {
+                title: "Special Programs messages by subtype",
+                desc: "Touchpoint tracking for specialized student subgroups",
+                cohort: "Full Dataset (5,973 messages)",
+                labels: ["IEP Meeting Notes", "Accommodation Reviews", "ELL Progress Checks"],
+                dataPoints: [2986, 1792, 1195], // 50%, 30%, 20%
+                percents: ["50.0%", "30.0%", "20.0%"],
+                insight: "Special education messages are strictly documented to comply with state audits. IEP milestones represent half of all programs logging volume."
+            },
+            {
+                title: "Other Combined messages by subtype",
+                desc: "Ad-hoc messaging and system log audits",
+                cohort: "Full Dataset (1,871 messages)",
+                labels: ["System Automated Logs", "Manual Overrides", "External Agency Notes"],
+                dataPoints: [935, 561, 375], // 50%, 30%, 20%
+                percents: ["50.0%", "30.0%", "20.0%"],
+                insight: "System audits and external agency reports capture secondary data points that fail to group into standard intervention categories."
+            }
+        ];
+
+        let dashSubtypeChartInstance = null;
+        let activeLogTypeIndex = 0;
+
+        function selectDashSubtype(index) {
+            activeLogTypeIndex = index;
+            const data = dashSubtypesData[index];
+            if (!data) return;
+
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "h-64 w-[360px] relative flex justify-start";
+            }
+
+            
+
+            // Ensure subtype table is visible
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.remove("hidden");
+            }
+
+            // Highlight active row in Log Type table with styling matching tables tab
+            for (let i = 0; i < 6; i++) {
+                const row = document.getElementById("logtype-row-" + i);
+                if (row) {
+                    if (i === index) {
+                        row.className = "bg-slate-200 hover:bg-slate-200 transition-colors cursor-pointer border-l-4 border-slate-950";
+                    } else {
+                        row.className = "hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent";
+                    }
+                }
+            }
+
+            // Update Text Elements
+            document.getElementById("dashSubtypeCohort").textContent = data.cohort;
+            document.getElementById("dashSubtypeTitle").textContent = data.title;
+            document.getElementById("dashSubtypeDesc").textContent = data.desc;
+            document.getElementById("dashSubtypeInsight").textContent = data.insight;
+
+            // Render Subtypes Table inside the card
+            const table = document.getElementById("dashSubtypeTable");
+            table.innerHTML = `
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-500 text-xs font-semibold">
+                            <th class="pb-2 font-semibold text-left">Subtype</th>
+                            <th class="pb-2 font-semibold text-right">Volume</th>
+                            <th class="pb-2 font-semibold text-right">% of messages</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 text-xs text-slate-700">
+                        ${data.labels.map((lbl, idx) => `
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-2.5 font-medium text-left">${lbl}</td>
+                                <td class="py-2.5 text-right text-slate-600">${data.dataPoints[idx].toLocaleString()}</td>
+                                <td class="py-2.5 text-right font-bold text-slate-950">${data.percents[idx]}</td>
+                            </tr>
+                        `).join("")}
+                        <tr class="font-bold border-t border-slate-200 bg-slate-50/50">
+                            <td class="py-2.5 text-slate-900 text-left">Total</td>
+                            <td class="py-2.5 text-right text-slate-900">${data.dataPoints.reduce((a, b) => a + b, 0).toLocaleString()}</td>
+                            <td class="py-2.5 text-right text-slate-950">100.0%</td>
+                        </tr>
+                    </tbody>
+                `;
+
+            // Update Chart.js Doughnut
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.dataPoints,
+                        backgroundColor: [
+                            "#1e3a8a", // Dark blue (focal)
+                            "#2563eb", // Royal blue
+                            "#60a5fa", // Light blue
+                            "#93c5fd", // Sky blue
+                            "#cbd5e1"  // Slate light
+                        ],
+                        borderWidth: 1.5,
+                        borderColor: "#ffffff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 11, weight: "500" },
+                                    color: "#334155"
+                                }                      
+                        }
+                    }
+                }
+            });
+        }
+
+        
+        function clearLogTypeHighlights() {
+            for (let i = 0; i < 6; i++) {
+                const row = document.getElementById("logtype-row-" + i);
+                if (row) {
+                    row.className = "hover:bg-slate-100/50 transition-colors cursor-pointer border-l-4 border-transparent";
+                }
+            }
+        }
+
+        function showWeekdayVolumeChart() {
+            clearLogTypeHighlights();
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "h-52 w-full relative flex justify-center";
+            }
+            document.getElementById("dashSubtypeCohort").textContent = "Full Dataset (100,019 messages)";
+            document.getElementById("dashSubtypeTitle").textContent = "Weekday Messages Profile";
+            document.getElementById("dashSubtypeDesc").textContent = "Logged messages mapped across the weekly cycle";
+            document.getElementById("dashSubtypeInsight").textContent = "Message volume peaks heavily during midweek checkpoints (Tuesday/Thursday) to reconcile student status messages prior to weekly progress reporting closures.";
+
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.add("hidden");
+            }
+
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    datasets: [{
+                        label: "Messages Volume",
+                        data: [20156, 20783, 17470, 22747, 17842, 682, 339],
+                        backgroundColor: [
+                            "#1e3a8a", // Dark blue (Mon)
+                            "#1e3a8a", // Dark blue (Tue)
+                            "#1e3a8a", // Dark blue (Wed)
+                            "#2563eb", // Royal blue (Thu peak)
+                            "#1e3a8a", // Dark blue (Fri)
+                            "#cbd5e1", // Light (Sat)
+                            "#cbd5e1"  // Light (Sun)
+                        ],
+                        borderRadius: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 10 },
+                                callback: function (value) { return value.toLocaleString(); }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function showMonthlyVolumeChart() {
+            clearLogTypeHighlights();
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "h-52 w-full relative flex justify-center";
+            }
+            document.getElementById("dashSubtypeCohort").textContent = "Full Dataset (100,019 messages)";
+            document.getElementById("dashSubtypeTitle").textContent = "Messages by Month Profile";
+            document.getElementById("dashSubtypeDesc").textContent = "Total logged messages tracked chronologically (July 2025 – May 2026)";
+            document.getElementById("dashSubtypeInsight").textContent = "Message surges are driven directly by predictable academic milestones: January semester start audits, March grade checkups, and May credit recovery locks. Staffing load fluctuates heavily with these dates.";
+
+            // Hide subtype data table wrapper since it corresponds to subtypes, not chronological months
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.add("hidden");
+            }
+
+            // Draw line chart (Monthly Volume trends)
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
+                    datasets: [{
+                        label: "Messages Volume",
+                        data: [23, 8500, 8305, 9200, 6123, 7200, 14487, 9787, 11549, 9446, 13461],
+                        backgroundColor: "transparent",
+                        borderColor: "#1e3a8a", // dark blue boundary
+                        borderWidth: 2.5,
+                        fill: false,
+                        pointBackgroundColor: "#2563eb",
+                        pointBorderColor: "#ffffff",
+                        pointBorderWidth: 1.5,
+                        pointRadius: 4.5,
+                        pointHoverRadius: 6,
+                        tension: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 10 },
+                                callback: function (value) { return value.toLocaleString(); }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function showLCAnnualChart() {
+            clearLogTypeHighlights();
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "h-52 w-full relative flex justify-center";
+            }
+            document.getElementById("dashSubtypeCohort").textContent = "Population: 3,646 Learning Coaches";
+            document.getElementById("dashSubtypeTitle").textContent = "Learning Coach annual messages";
+            document.getElementById("dashSubtypeDesc").textContent = "Average annual communication volume experienced by a single Learning Coach";
+            document.getElementById("dashSubtypeInsight").textContent = "Direct parent contacts constitute nearly half (12.75 messages) of the annual communication volume experienced by a Learning Coach, representing the core relationship channel.";
+
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.add("hidden");
+            }
+
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Parent Contact", "Stride Email", "Student Contact", "Office Messages", "Special Programs", "All Others"],
+                    datasets: [{
+                        label: "Avg. Messages / Year",
+                        data: [12.75, 6.96, 3.85, 1.72, 1.64, 0.48],
+                        backgroundColor: [
+                            "#1e3a8a", // Darkest blue (12.75)
+                            "#2563eb", // Royal blue (6.96)
+                            "#3b82f6", // Medium blue (3.85)
+                            "#60a5fa", // Sky blue (1.72)
+                            "#93c5fd", // Light blue (1.64)
+                            "#cbd5e1"  // Very light blue/slate (0.48)
+                        ],
+                        borderRadius: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function showLCSubtypeChart() {
+            clearLogTypeHighlights();
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "h-52 w-full relative flex justify-center";
+            }
+            document.getElementById("dashSubtypeCohort").textContent = "Population: 3,646 Learning Coaches";
+            document.getElementById("dashSubtypeTitle").textContent = "Learning Coach subtype messages";
+            document.getElementById("dashSubtypeDesc").textContent = "Average annual subtype parent connection states experienced by a single Learning Coach";
+            document.getElementById("dashSubtypeInsight").textContent = "Successful contacts (Made Connection, 2.52/year) are significantly lower than failed attempts and administrative notifications (No Connection + Attempts + General, 10.23/year).";
+
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.add("hidden");
+            }
+
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["General / Admin", "No Connection", "Made Connection", "Connection Attempt"],
+                    datasets: [{
+                        label: "Avg. Messages / Year",
+                        data: [5.56, 3.76, 2.52, 0.90],
+                        backgroundColor: [
+                            "#1e3a8a", // Darkest blue (5.56)
+                            "#2563eb", // Royal blue (3.76)
+                            "#3b82f6", // Medium blue (2.52)
+                            "#93c5fd"  // Light blue (0.90)
+                        ],
+                        borderRadius: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9 } } },
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        
+
+        function copyEmailToClipboard(el) {
+            const email = "ebrown1@k12.com";
+            navigator.clipboard.writeText(email).then(() => {
+                const textSpan = el.querySelector('span');
+                const tooltipDiv = el.querySelector('div');
+                const originalText = textSpan.textContent;
+                textSpan.textContent = "Copied!";
+                textSpan.classList.add("text-green-600", "font-bold");
+                if (tooltipDiv) tooltipDiv.style.display = 'none';
+                setTimeout(() => {
+                    textSpan.textContent = originalText;
+                    textSpan.classList.remove("text-green-600", "font-bold");
+                    if (tooltipDiv) tooltipDiv.style.display = '';
+                }, 1500);
+            }).catch(err => {
+                console.error("Failed to copy email: ", err);
+            });
+        }
+
+        // Trigger default view on load
+        document.addEventListener("DOMContentLoaded", () => {
+            selectDashSubtype(0);
+        });
+
+        // Immediately execute in case DOMContentLoaded has already fired
+        selectDashSubtype(0);
+
+    </script>
+</body>
+
+</html>
