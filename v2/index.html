@@ -184,7 +184,8 @@
 
                     <!-- Left Pane: Consolidated Log Statistics -->
                     <div
-                        class="lg:col-span-4 lg:pr-6 lg:border-r lg:border-slate-200 flex flex-col gap-6 overflow-y-auto pr-3 custom-scrollbar h-full">
+                        class="lg:col-span-4 lg:pr-6 lg:border-r lg:border-slate-200 flex flex-col gap-6 overflow-y-auto pr-3 custom-scrollbar h-full"
+                        onmouseleave="restoreLockedDashSubtype()">
                         <!-- Part 1: PowerSchool Logged messages Metric Header -->
                         <div>
 
@@ -194,8 +195,8 @@
                         </div>
 
                         <!-- Part 2: Log Type Breakdown (Communication Channel Mix) -->
-                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl"
-                            id="log-type-section" onmouseenter="selectDashSubtype(activeLogTypeIndex);">
+                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl"
+                            id="log-type-section" onclick="lockSection('logtype')">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
                                     log type</h4>
@@ -210,44 +211,44 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-0" onclick="selectDashSubtype(0)"
-                                            onmouseenter="selectDashSubtype(0)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-0" onclick="lockDashSubtype(0, event)"
+                                            onmouseenter="previewDashSubtype(0)">
                                             <td class="py-2 font-medium pl-2">Parent Contact</td>
                                             <td class="py-2 text-right text-slate-600">46,476</td>
                                             <td class="py-2 text-right font-semibold text-slate-950 pr-2">46.5%</td>
                                         </tr>
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-1" onclick="selectDashSubtype(1)"
-                                            onmouseenter="selectDashSubtype(1)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-1" onclick="lockDashSubtype(1, event)"
+                                            onmouseenter="previewDashSubtype(1)">
                                             <td class="py-2 font-medium pl-2">Stride Email</td>
                                             <td class="py-2 text-right text-slate-600">25,378</td>
                                             <td class="py-2 text-right font-semibold text-slate-950 pr-2">25.4%</td>
                                         </tr>
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-2" onclick="selectDashSubtype(2)"
-                                            onmouseenter="selectDashSubtype(2)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-2" onclick="lockDashSubtype(2, event)"
+                                            onmouseenter="previewDashSubtype(2)">
                                             <td class="py-2 font-medium pl-2">Student Contact</td>
                                             <td class="py-2 text-right text-slate-600">14,037</td>
                                             <td class="py-2 text-right font-semibold text-slate-950 pr-2">14.0%</td>
                                         </tr>
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-3" onclick="selectDashSubtype(3)"
-                                            onmouseenter="selectDashSubtype(3)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-3" onclick="lockDashSubtype(3, event)"
+                                            onmouseenter="previewDashSubtype(3)">
                                             <td class="py-2 font-medium pl-2">Office</td>
                                             <td class="py-2 text-right text-slate-600">6,284</td>
                                             <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.3%</td>
                                         </tr>
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-4" onclick="selectDashSubtype(4)"
-                                            onmouseenter="selectDashSubtype(4)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-4" onclick="lockDashSubtype(4, event)"
+                                            onmouseenter="previewDashSubtype(4)">
                                             <td class="py-2 font-medium pl-2">Special Programs</td>
                                             <td class="py-2 text-right text-slate-600">5,973</td>
                                             <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.0%</td>
                                         </tr>
-                                        <tr class="hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent"
-                                            id="logtype-row-5" onclick="selectDashSubtype(5)"
-                                            onmouseenter="selectDashSubtype(5)">
+                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                                            id="logtype-row-5" onclick="lockDashSubtype(5, event)"
+                                            onmouseenter="previewDashSubtype(5)">
                                             <td class="py-2 font-medium pl-2 text-slate-400">Other Combined</td>
                                             <td class="py-2 text-right text-slate-400">1,871</td>
                                             <td class="py-2 text-right font-semibold text-slate-400 pr-2">1.8%</td>
@@ -263,8 +264,8 @@
                         </div>
 
                         <!-- Part 3: Breakdown by Day (Monday to Sunday) -->
-                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
-                            id="weekday-breakdown-section" onmouseenter="showWeekdayVolumeChart();">
+                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="weekday-breakdown-section" onmouseenter="showWeekdayVolumeChart();" onclick="lockSection('weekday')">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
                                     weekday</h4>
@@ -326,8 +327,8 @@
                         </div>
 
                         <!-- Part 4: School Year Breakdown in Chronological Order -->
-                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
-                            id="monthly-breakdown-section" onmouseenter="showMonthlyVolumeChart();">
+                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="monthly-breakdown-section" onmouseenter="showMonthlyVolumeChart();" onclick="lockSection('monthly')">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Messages by
                                     month</h4>
@@ -409,8 +410,8 @@
                         </div>
 
                         <!-- Part 5: Learning Coach annual messages Breakdown -->
-                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
-                            id="lc-annual-section" onmouseenter="showLCAnnualChart();">
+                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="lc-annual-section" onmouseenter="showLCAnnualChart();" onclick="lockSection('lc-annual')">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC
                                     messages by School Year</h4>
@@ -458,8 +459,8 @@
                         </div>
 
                         <!-- Part 6: Learning Coach subtype messages Breakdown -->
-                        <div class="bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
-                            id="lc-subtype-section" onmouseenter="showLCSubtypeChart();">
+                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
+                            id="lc-subtype-section" onmouseenter="showLCSubtypeChart();" onclick="lockSection('lc-subtype')">
                             <div class="flex items-center justify-between mb-3">
                                 <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC
                                     messages by subtype</h4>
@@ -622,6 +623,128 @@
 
         let dashSubtypeChartInstance = null;
         let activeLogTypeIndex = 0;
+        let lockedLogTypeIndex = 0;
+        let currentlyViewingSubtypes = true;
+        let lockedView = "logtype";
+        let activeSection = "logtype";
+        const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section", "lc-subtype-section"];
+
+        function updateSectionCardBorders() {
+            sectionIds.forEach(id => {
+                const card = document.getElementById(id);
+                if (!card) return;
+                
+                let isLocked = false;
+                if (id === "log-type-section" && lockedView === "logtype") isLocked = true;
+                else if (id === "weekday-breakdown-section" && lockedView === "weekday") isLocked = true;
+                else if (id === "monthly-breakdown-section" && lockedView === "monthly") isLocked = true;
+                else if (id === "lc-annual-section" && lockedView === "lc-annual") isLocked = true;
+                else if (id === "lc-subtype-section" && lockedView === "lc-subtype") isLocked = true;
+                
+                let isActive = false;
+                if (id === "log-type-section" && currentlyViewingSubtypes) isActive = true;
+                else if (id === "weekday-breakdown-section" && activeSection === "weekday") isActive = true;
+                else if (id === "monthly-breakdown-section" && activeSection === "monthly") isActive = true;
+                else if (id === "lc-annual-section" && activeSection === "lc-annual") isActive = true;
+                else if (id === "lc-subtype-section" && activeSection === "lc-subtype") isActive = true;
+                
+                let classes = "p-4 transition-all duration-300 rounded-xl cursor-pointer ";
+                if (id !== "log-type-section") {
+                    classes += "mt-4 ";
+                }
+                
+                if (isLocked) {
+                    classes += "bg-slate-50 border-2 border-slate-500 shadow-md";
+                } else if (isActive) {
+                    classes += "bg-slate-50 border border-slate-400 shadow-sm";
+                } else {
+                    classes += "bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm";
+                }
+                
+                card.className = classes;
+            });
+        }
+
+        function updateLogTypeRowStyles() {
+            for (let i = 0; i < 6; i++) {
+                const row = document.getElementById("logtype-row-" + i);
+                if (!row) continue;
+                
+                const firstCell = row.querySelector("td");
+                
+                let rowClasses = "transition-colors cursor-pointer ";
+                let cellBorderClasses = "border-l-4 ";
+                
+                if (lockedView === "logtype" && i === lockedLogTypeIndex) {
+                    cellBorderClasses += "border-slate-500 ";
+                    if (currentlyViewingSubtypes && i === activeLogTypeIndex) {
+                        rowClasses += "bg-slate-200 hover:bg-slate-200";
+                    } else {
+                        rowClasses += "bg-slate-100/70 hover:bg-slate-200/80";
+                    }
+                } else if (currentlyViewingSubtypes && i === activeLogTypeIndex) {
+                    cellBorderClasses += "border-slate-300 ";
+                    rowClasses += "bg-slate-100/80 hover:bg-slate-100";
+                } else {
+                    cellBorderClasses += "border-transparent ";
+                    rowClasses += "hover:bg-slate-100/50";
+                }
+                
+                row.className = rowClasses;
+                
+                if (firstCell) {
+                    firstCell.classList.remove("border-l-4", "border-slate-950", "border-slate-300", "border-transparent");
+                    cellBorderClasses.split(" ").forEach(cls => {
+                        if (cls) firstCell.classList.add(cls);
+                    });
+                }
+            }
+        }
+
+        function lockSection(sectionName) {
+            lockedView = sectionName;
+            activeSection = sectionName;
+            currentlyViewingSubtypes = (sectionName === "logtype");
+            
+            if (sectionName === "logtype") {
+                selectDashSubtype(lockedLogTypeIndex);
+            } else if (sectionName === "weekday") {
+                showWeekdayVolumeChart();
+            } else if (sectionName === "monthly") {
+                showMonthlyVolumeChart();
+            } else if (sectionName === "lc-annual") {
+                showLCAnnualChart();
+            } else if (sectionName === "lc-subtype") {
+                showLCSubtypeChart();
+            }
+            
+            updateSectionCardBorders();
+            updateLogTypeRowStyles();
+        }
+
+        function lockDashSubtype(index, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            lockedLogTypeIndex = index;
+            lockedView = "logtype";
+            activeSection = "logtype";
+            currentlyViewingSubtypes = true;
+            selectDashSubtype(index);
+            updateSectionCardBorders();
+        }
+
+        function previewDashSubtype(index) {
+            activeLogTypeIndex = index;
+            activeSection = "logtype";
+            currentlyViewingSubtypes = true;
+            selectDashSubtype(index);
+            updateSectionCardBorders();
+        }
+
+        function restoreLockedDashSubtype() {
+            lockSection(lockedView);
+        }
 
         function selectDashSubtype(index) {
             activeLogTypeIndex = index;
@@ -630,10 +753,8 @@
 
             const container = document.getElementById("dashChartContainer");
             if (container) {
-                container.className = "h-64 w-[360px] relative flex justify-start";
+                container.className = "w-[clamp(16.25rem,100%,34.125rem)] h-[clamp(13.75rem,35vh,27.625rem)] relative flex justify-center md:justify-start";
             }
-
-
 
             // Ensure subtype table is visible
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
@@ -641,17 +762,7 @@
                 tableWrapper.classList.remove("hidden");
             }
 
-            // Highlight active row in Log Type table with styling matching tables tab
-            for (let i = 0; i < 6; i++) {
-                const row = document.getElementById("logtype-row-" + i);
-                if (row) {
-                    if (i === index) {
-                        row.className = "bg-slate-200 hover:bg-slate-200 transition-colors cursor-pointer border-l-4 border-slate-950";
-                    } else {
-                        row.className = "hover:bg-slate-100/50 hover:border-slate-400 transition-colors cursor-pointer border-l-4 border-transparent";
-                    }
-                }
-            }
+            updateLogTypeRowStyles();
 
             // Update Text Elements
             document.getElementById("dashSubtypeCohort").textContent = data.cohort;
@@ -728,18 +839,15 @@
             });
         }
 
-
         function clearLogTypeHighlights() {
-            for (let i = 0; i < 6; i++) {
-                const row = document.getElementById("logtype-row-" + i);
-                if (row) {
-                    row.className = "hover:bg-slate-100/50 transition-colors cursor-pointer border-l-4 border-transparent";
-                }
-            }
+            currentlyViewingSubtypes = false;
+            updateLogTypeRowStyles();
         }
 
         function showWeekdayVolumeChart() {
+            activeSection = "weekday";
             clearLogTypeHighlights();
+            updateSectionCardBorders();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -804,7 +912,9 @@
         }
 
         function showMonthlyVolumeChart() {
+            activeSection = "monthly";
             clearLogTypeHighlights();
+            updateSectionCardBorders();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -873,7 +983,9 @@
         }
 
         function showLCAnnualChart() {
+            activeSection = "lc-annual";
             clearLogTypeHighlights();
+            updateSectionCardBorders();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -937,7 +1049,9 @@
         }
 
         function showLCSubtypeChart() {
+            activeSection = "lc-subtype";
             clearLogTypeHighlights();
+            updateSectionCardBorders();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -1017,11 +1131,11 @@
 
         // Trigger default view on load
         document.addEventListener("DOMContentLoaded", () => {
-            selectDashSubtype(0);
+            lockSection("logtype");
         });
 
         // Immediately execute in case DOMContentLoaded has already fired
-        selectDashSubtype(0);
+        lockSection("logtype");
 
     </script>
 </body>
