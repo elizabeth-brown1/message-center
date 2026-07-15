@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZVA/ISAZ Logged Messages Explorer</title>
-    <meta name="description" content="Data exploration dashboard for AZVA/ISAZ student and family logged messages.">
+    <title>Logged Messages Explorer Dashboard</title>
+    <meta name="description" content="Data exploration dashboard for student and family logged messages.">
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -134,46 +134,20 @@
             <header
                 class="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between gap-4 shrink-0">
                 <div class="flex items-center gap-5">
-                    <h1 class="text-l font-semibold text-slate-500 tracking-loose">PowerSchool Logged Messages
+                    <h1 class="text-l font-semibold text-slate-500 tracking-loose" id="dashboard-subtitle">PowerSchool Logged Messages
                         <br>AZVA and ISAZ (SY25-26) | Population: 3,646 Students (Proxy for LC Households)
                     </h1>
                 </div>
 
-                <!-- Export Dataset Button with Custom Tooltip -->
-                <div class="relative group">
-                    <a href="./full_dataset_no_PII.xlsx" download="full_dataset_no_PII.xlsx"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 focus:ring-offset-white text-sm"
-                        aria-label="Export Full Dataset - Click here to download an Excel of the full No-PII dataset (100,019 messages)"
-                        tabindex="0">
-                        <!-- Excel/Download Icon -->
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        <span>Export Full Dataset</span>
-                    </a>
-                    <!-- Custom Premium Tooltip -->
-                    <div
-                        class="absolute right-0 top-full mt-2 w-72 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none border border-slate-800">
-                        <div class="font-bold mb-1 flex items-center gap-1.5 text-green-400">
-                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            Excel Spreadsheet (.xlsx)
-                        </div>
-                        <p class="text-slate-300 leading-relaxed">Click here to download an Excel of the full dataset
-                            containing <strong>100,019 messages</strong>.</p>
-                        <div class="mt-2 text-[10px] text-slate-400 italic">Includes log types, weekdays, and monthly
-                            breakdown histories.</div>
-                        <!-- Arrow -->
-                        <div
-                            class="absolute right-6 -top-1 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-slate-800">
-                        </div>
-                    </div>
+                <!-- School Switcher -->
+                <div class="flex flex-col gap-1 items-start">
+                    <label for="school-select" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Schools</label>
+                    <select id="school-select" onchange="changeSchool(this.value)" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg p-2 focus:ring-slate-500 focus:border-slate-500 font-semibold select-none">
+                        <option value="AZVA" selected>AZVA</option>
+                        <option value="IAVA">IAVA</option>
+                        <option value="TVAH">TVAH</option>
+                        <option value="WIVA">WIVA</option>
+                    </select>
                 </div>
             </header>
 
@@ -190,7 +164,7 @@
                         <div>
 
                             <div class="flex items-baseline gap-3">
-                                <h2 class="text-5xl font-extrabold text-slate-950">100,019 Messages</h2>
+                                <h2 class="text-5xl font-extrabold text-slate-950" id="school-total-messages">100,019 Messages</h2>
                             </div>
                         </div>
 
@@ -210,55 +184,7 @@
                                             <th class="pb-2 font-semibold text-right">% of messages</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-0" onclick="lockDashSubtype(0, event)"
-                                            onmouseenter="previewDashSubtype(0)">
-                                            <td class="py-2 font-medium pl-2">Parent Contact</td>
-                                            <td class="py-2 text-right text-slate-600">46,476</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">46.5%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-1" onclick="lockDashSubtype(1, event)"
-                                            onmouseenter="previewDashSubtype(1)">
-                                            <td class="py-2 font-medium pl-2">Stride Email</td>
-                                            <td class="py-2 text-right text-slate-600">25,378</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">25.4%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-2" onclick="lockDashSubtype(2, event)"
-                                            onmouseenter="previewDashSubtype(2)">
-                                            <td class="py-2 font-medium pl-2">Student Contact</td>
-                                            <td class="py-2 text-right text-slate-600">14,037</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">14.0%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-3" onclick="lockDashSubtype(3, event)"
-                                            onmouseenter="previewDashSubtype(3)">
-                                            <td class="py-2 font-medium pl-2">Office</td>
-                                            <td class="py-2 text-right text-slate-600">6,284</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.3%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-4" onclick="lockDashSubtype(4, event)"
-                                            onmouseenter="previewDashSubtype(4)">
-                                            <td class="py-2 font-medium pl-2">Special Programs</td>
-                                            <td class="py-2 text-right text-slate-600">5,973</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950 pr-2">6.0%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
-                                            id="logtype-row-5" onclick="lockDashSubtype(5, event)"
-                                            onmouseenter="previewDashSubtype(5)">
-                                            <td class="py-2 font-medium pl-2 text-slate-400">Other Combined</td>
-                                            <td class="py-2 text-right text-slate-400">1,871</td>
-                                            <td class="py-2 text-right font-semibold text-slate-400 pr-2">1.8%</td>
-                                        </tr>
-                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                                            <td class="py-2 font-bold text-slate-900">Total</td>
-                                            <td class="py-2 text-right text-slate-900">100,019</td>
-                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="logtype-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
                                 </table>
                             </div>
                         </div>
@@ -279,49 +205,7 @@
                                             <th class="pb-2 font-semibold text-right">% of messages</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Monday</td>
-                                            <td class="py-2 text-right text-slate-600">20,156</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">20.2%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Tuesday</td>
-                                            <td class="py-2 text-right text-slate-600">20,783</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">20.8%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Wednesday</td>
-                                            <td class="py-2 text-right text-slate-600">17,470</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">17.5%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium text-slate-950 font-semibold">Thursday (Peak)
-                                            </td>
-                                            <td class="py-2 text-right text-slate-950 font-semibold">22,747</td>
-                                            <td class="py-2 text-right font-bold text-slate-950">22.7%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Friday</td>
-                                            <td class="py-2 text-right text-slate-600">17,842</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">17.8%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Saturday</td>
-                                            <td class="py-2 text-right text-slate-600">682</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">0.7%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Sunday</td>
-                                            <td class="py-2 text-right text-slate-600">339</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">0.3%</td>
-                                        </tr>
-                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                                            <td class="py-2 font-bold text-slate-900">Total</td>
-                                            <td class="py-2 text-right text-slate-900">100,019</td>
-                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="weekday-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
                                 </table>
                             </div>
                         </div>
@@ -343,68 +227,7 @@
                                             <th class="pb-2 font-semibold text-right">% of messages</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">July 2025</td>
-                                            <td class="py-2 text-right text-slate-600">23</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">0.02%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">August 2025</td>
-                                            <td class="py-2 text-right text-slate-600">8,500</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">8.50%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">September 2025</td>
-                                            <td class="py-2 text-right text-slate-600">8,305</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">8.30%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">October 2025</td>
-                                            <td class="py-2 text-right text-slate-600">9,200</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">9.20%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">November 2025</td>
-                                            <td class="py-2 text-right text-slate-600">6,123</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">6.12%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">December 2025</td>
-                                            <td class="py-2 text-right text-slate-600">7,200</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">7.20%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">January 2026</td>
-                                            <td class="py-2 text-right text-slate-600">14,487</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">14.48%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">February 2026</td>
-                                            <td class="py-2 text-right text-slate-600">9,787</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">9.79%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">March 2026</td>
-                                            <td class="py-2 text-right text-slate-600">11,549</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">11.55%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">April 2026</td>
-                                            <td class="py-2 text-right text-slate-600">9,446</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">9.44%</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">May 2026</td>
-                                            <td class="py-2 text-right text-slate-600">13,461</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">13.46%</td>
-                                        </tr>
-                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                                            <td class="py-2 font-bold text-slate-900">Total</td>
-                                            <td class="py-2 text-right text-slate-900">100,019</td>
-                                            <td class="py-2 text-right font-bold text-slate-950">100.0%</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="monthly-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
                                 </table>
                             </div>
                         </div>
@@ -424,36 +247,7 @@
                                             <th class="pb-2 font-semibold text-right">Avg. Messages / Year</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Parent Contact</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">12.75</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Stride Email</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">6.96</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Student Contact</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">3.85</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Office Messages</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">1.72</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Special Programs</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">1.64</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium text-slate-400">All Others</td>
-                                            <td class="py-2 text-right font-semibold text-slate-400">0.48</td>
-                                        </tr>
-                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                                            <td class="py-2 font-bold text-slate-900">Total Average</td>
-                                            <td class="py-2 text-right text-slate-950 font-bold">27.40</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="lcannual-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
                                 </table>
                             </div>
                         </div>
@@ -473,28 +267,7 @@
                                             <th class="pb-2 font-semibold text-right">Avg. Messages / Year</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-slate-700">
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">General Outreach / Administrative</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">5.56</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Unsuccessful Contact (No Connection)</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">3.76</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Successful Contact (Made Connection)</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">2.52</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="py-2 font-medium">Additional Connection Attempts</td>
-                                            <td class="py-2 text-right font-semibold text-slate-950">0.90</td>
-                                        </tr>
-                                        <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                                            <td class="py-2 font-bold text-slate-900">Total Average Parent Contacts</td>
-                                            <td class="py-2 text-right text-slate-950 font-bold">12.75</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="lcsubtype-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
                                 </table>
                             </div>
                         </div>
@@ -540,21 +313,7 @@
                 <!-- Footer Signature -->
                 <footer class="flex justify-end items-center mt-2.5">
                     <span class="text-[9px] text-slate-400 tracking-tight select-none">
-                        Insights provided by <span onclick="copyEmailToClipboard(this)"
-                            class="group relative inline-block hover:text-sky-500 text-slate-400 transition-colors font-medium cursor-pointer"><span>ebrown1@k12.com</span>
-                            <div
-                                class="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-sans font-bold px-2 py-1 rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none flex items-center gap-1.5 z-50 whitespace-nowrap">
-                                <span>Copy</span><svg class="w-2.5 h-2.5 text-slate-300" fill="none"
-                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                                </svg>
-                                <div
-                                    class="absolute top-full left-1/2 -translate-x-1/2 w-1 h-1 bg-slate-900 rotate-45 -mt-0.5">
-                                </div>
-                            </div>
-                        </span>, UXR
+                        Company Confidential K12 UXR, ebrown1@k12.com
                     </span>
                 </footer>
             </div>
@@ -563,62 +322,351 @@
 
     <!-- Javascript Dashboard and Table Data Handler -->
     <script>
-        // --- Dashboard Dynamic Subtypes Setup ---
-        const dashSubtypesData = [
-            {
-                title: "Parent Contact messages by subtype",
-                desc: "Analysis of response states from parent-directed messages",
-                cohort: "Full Dataset (46,476 messages)",
-                labels: ["No Connection", "Made Connection", "Connection Attempt"],
-                dataPoints: [24307, 16313, 5856], // 52.3%, 35.1%, 12.6%
-                percents: ["52.3%", "35.1%", "12.6%"],
-                insight: "Over half of parent-directed messages result in 'No Connection'. This represents a significant operational overhead where outreach protocols consume resources without achieving contact."
+        const schoolsData = {
+            "AZVA": {
+                name: "AZVA",
+                subtitle: "AZVA and ISAZ (SY25-26)",
+                population: 3646,
+                totalMessagesNum: 100019,
+                logTypes: [
+                    { label: "Parent Contact", volume: 46476, percent: "46.5%" },
+                    { label: "Stride Email", volume: 25378, percent: "25.4%" },
+                    { label: "Student Contact", volume: 14037, percent: "14.0%" },
+                    { label: "Office Messages", volume: 6284, percent: "6.3%" },
+                    { label: "Special Programs", volume: 5973, percent: "6.0%" },
+                    { label: "Other Combined", volume: 1871, percent: "1.8%" }
+                ],
+                dashSubtypesData: [
+                    {
+                        title: "Parent Contact messages by subtype",
+                        desc: "Analysis of response states from parent-directed messages",
+                        cohort: "AZVA Dataset (46,476 messages)",
+                        labels: ["No Connection", "Made Connection", "Connection Attempt"],
+                        dataPoints: [24307, 16313, 5856],
+                        percents: ["52.3%", "35.1%", "12.6%"],
+                        insight: "Over half of parent-directed messages result in 'No Connection'. This represents a significant operational overhead where outreach protocols consume resources without achieving contact."
+                    },
+                    {
+                        title: "Stride Email messages by subtype",
+                        desc: "Analysis of auto-reports and targeted email campaigns",
+                        cohort: "AZVA Dataset (25,378 messages)",
+                        labels: ["Weekly Progress Reports", "Missing Assignment Alerts", "General Announcements"],
+                        dataPoints: [15226, 6090, 4062],
+                        percents: ["60.0%", "24.0%", "16.0%"],
+                        insight: "Automated progress updates represent the vast majority of emails. System automation provides low-cost touchpoints but requires monitoring for engagement quality."
+                    },
+                    {
+                        title: "Student Contact messages by subtype",
+                        desc: "Detailed results of student-directed messages",
+                        cohort: "AZVA Dataset (14,037 messages)",
+                        labels: ["Made Connection", "No Connection", "Grad Plan Fall Conf.", "Grad Plan Spring Conf.", "Enduring Connection Calls"],
+                        dataPoints: [5965, 5263, 1586, 877, 346],
+                        percents: ["42.5%", "37.5%", "11.3%", "6.3%", "2.5%"],
+                        insight: "Student-directed touchpoints show higher connection success rates (42.5%) than parent calls, driven by mandatory academic counseling sessions."
+                    },
+                    {
+                        title: "Office Messages by subtype",
+                        desc: "Breakdown of administrative office messages",
+                        cohort: "AZVA Dataset (6,284 messages)",
+                        labels: ["Attendance Inquiry", "Records Request", "General Office Notes"],
+                        dataPoints: [3142, 1885, 1257],
+                        percents: ["50.0%", "30.0%", "20.0%"],
+                        insight: "Office operations focus primarily on attendance reconciliation and records administration, forming the regulatory audit trail of the enrollment process."
+                    },
+                    {
+                        title: "Special Programs messages by subtype",
+                        desc: "Touchpoint tracking for specialized student subgroups",
+                        cohort: "AZVA Dataset (5,973 messages)",
+                        labels: ["IEP Meeting Notes", "Accommodation Reviews", "ELL Progress Checks"],
+                        dataPoints: [2986, 1792, 1195],
+                        percents: ["50.0%", "30.0%", "20.0%"],
+                        insight: "Special education messages are strictly documented to comply with state audits. IEP milestones represent half of all programs logging volume."
+                    },
+                    {
+                        title: "Other Combined messages by subtype",
+                        desc: "Ad-hoc messaging and system log audits",
+                        cohort: "AZVA Dataset (1,871 messages)",
+                        labels: ["System Automated Logs", "Manual Overrides", "External Agency Notes"],
+                        dataPoints: [935, 561, 375],
+                        percents: ["50.0%", "30.0%", "20.0%"],
+                        insight: "System audits and external agency reports capture secondary data points that fail to group into standard intervention categories."
+                    }
+                ],
+                weekday: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [20156, 20783, 17470, 22747, 17842, 682, 339],
+                    percents: ["20.2%", "20.8%", "17.5%", "22.7%", "17.8%", "0.7%", "0.3%"]
+                },
+                monthly: {
+                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
+                    data: [23, 8500, 8305, 9200, 6123, 7200, 14487, 9787, 11549, 9446, 13461],
+                    percents: ["0.02%", "8.50%", "8.30%", "9.20%", "6.12%", "7.20%", "14.48%", "9.79%", "11.55%", "9.44%", "13.46%"]
+                },
+                lcAnnual: {
+                    labels: ["Parent Contact", "Stride Email", "Student Contact", "Office Messages", "Special Programs", "All Others"],
+                    data: [12.75, 6.96, 3.85, 1.72, 1.64, 0.48],
+                    total: "27.40"
+                },
+                lcSubtype: {
+                    labels: ["General Outreach / Administrative", "Unsuccessful Contact (No Connection)", "Successful Contact (Made Connection)", "Additional Connection Attempts"],
+                    data: [5.56, 3.76, 2.52, 0.90],
+                    total: "12.75"
+                }
             },
-            {
-                title: "Stride Email messages by subtype",
-                desc: "Analysis of auto-reports and targeted email campaigns",
-                cohort: "Full Dataset (25,378 messages)",
-                labels: ["Weekly Progress Reports", "Missing Assignment Alerts", "General Announcements"],
-                dataPoints: [15226, 6091, 4061], // 60%, 24%, 16%
-                percents: ["60.0%", "24.0%", "16.0%"],
-                insight: "Stride Email is heavily automated, with weekly progress reports forming the foundation. It serves as a low-touch tracking channel for learning coach updates."
+            "IAVA": {
+                name: "IAVA",
+                subtitle: "IAVA (SY25-26)",
+                population: 1422,
+                totalMessagesNum: 62373,
+                logTypes: [
+                    { label: "Stride Email", volume: 34077, percent: "54.6%" },
+                    { label: "Historical Notes", volume: 24997, percent: "40.1%" },
+                    { label: "Student Contact", volume: 1866, percent: "3.0%" },
+                    { label: "Parent Contact", volume: 681, percent: "1.1%" },
+                    { label: "Attendance", volume: 400, percent: "0.6%" },
+                    { label: "Historical Program Note", volume: 174, percent: "0.3%" },
+                    { label: "Counselor", volume: 81, percent: "0.1%" },
+                    { label: "Re-Registration", volume: 63, percent: "0.1%" },
+                    { label: "Grade Change", volume: 23, percent: "0.0%" },
+                    { label: "Special Programs", volume: 5, percent: "0.0%" }
+                ],
+                dashSubtypesData: [
+                    {
+                        title: "Stride Email messages by subtype",
+                        desc: "Analysis of response states from Stride Email messages",
+                        cohort: "IAVA Dataset (34,077 messages)",
+                        labels: ["No Subtype Entered", "All Others"],
+                        dataPoints: [33997, 80],
+                        percents: ["99.8%", "0.2%"],
+                        insight: "Stride Email is the dominant outreach channel, accounting for more than half of all logged communication activity."
+                    },
+                    {
+                        title: "Historical Notes messages by subtype",
+                        desc: "Analysis of response states from Historical Notes messages",
+                        cohort: "IAVA Dataset (24,997 messages)",
+                        labels: ["Historical Note"],
+                        dataPoints: [24997],
+                        percents: ["100.0%"],
+                        insight: "Historical Notes function as the primary archival communication record across the school year."
+                    },
+                    {
+                        title: "Student Contact messages by subtype",
+                        desc: "Analysis of response states from Student Contact messages",
+                        cohort: "IAVA Dataset (1,866 messages)",
+                        labels: ["No Subtype Entered", "Strong Start Welcome", "Strong Start: Connec", "Advocacy: Ad Hoc"],
+                        dataPoints: [1828, 35, 2, 1],
+                        percents: ["98.0%", "1.9%", "0.1%", "0.1%"],
+                        insight: "Most student outreach is logged without a subtype, suggesting lightweight direct engagement workflows."
+                    },
+                    {
+                        title: "Parent Contact messages by subtype",
+                        desc: "Analysis of response states from Parent Contact messages",
+                        cohort: "IAVA Dataset (681 messages)",
+                        labels: ["No Subtype Entered"],
+                        dataPoints: [681],
+                        percents: ["100.0%"],
+                        insight: "Parent outreach volume is relatively low and subtype usage is not standardized."
+                    },
+                    {
+                        title: "Attendance messages by subtype",
+                        desc: "Analysis of response states from Attendance messages",
+                        cohort: "IAVA Dataset (400 messages)",
+                        labels: ["No Subtype Entered"],
+                        dataPoints: [400],
+                        percents: ["100.0%"],
+                        insight: "Attendance communications are targeted and represent a small operational share of total messaging."
+                    },
+                    {
+                        title: "Counselor messages by subtype",
+                        desc: "Analysis of response states from Counselor messages",
+                        cohort: "IAVA Dataset (81 messages)",
+                        labels: ["No Subtype Entered"],
+                        dataPoints: [81],
+                        percents: ["100.0%"],
+                        insight: "Counselor interactions are highly selective and reserved for specific student support cases."
+                    }
+                ],
+                weekday: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [12891, 14190, 10574, 11249, 11099, 1004, 1366],
+                    percents: ["20.7%", "22.8%", "17.0%", "18.0%", "17.8%", "1.6%", "2.2%"]
+                },
+                monthly: {
+                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
+                    data: [37, 6306, 4748, 4888, 957, 1884, 9696, 8778, 10860, 5880, 8079],
+                    percents: ["0.1%", "10.1%", "7.6%", "7.8%", "1.5%", "3.0%", "15.5%", "14.1%", "17.4%", "9.4%", "13.0%"]
+                },
+                lcAnnual: {
+                    labels: ["Stride Email", "Historical Notes", "Student Contact", "Parent Contact", "Attendance", "Historical Program Note", "Counselor", "Re-Registration", "Grade Change", "Special Programs"],
+                    data: [23.96, 17.58, 1.31, 0.48, 0.28, 0.12, 0.06, 0.04, 0.02, 0.00],
+                    total: "43.85"
+                },
+                lcSubtype: {
+                    labels: ["No Subtype Entered"],
+                    data: [0.48],
+                    total: "0.48"
+                },
+                uxrInsights: [
+                    "Stride Email is the dominant outreach channel, accounting for more than half of all logged communication activity.",
+                    "Historical Notes function as the primary archival communication record across the school year.",
+                    "Most student outreach is logged without a subtype, suggesting lightweight direct engagement workflows.",
+                    "Parent outreach volume is relatively low and subtype usage is not standardized.",
+                    "Attendance communications are targeted and represent a small operational share of total messaging.",
+                    "Historical Program Notes capture archival notes and legacy program tracking.",
+                    "Counselor interactions are highly selective and reserved for specific student support cases.",
+                    "Re-Registration logs capture crucial end-of-year intent-to-return compliance tracking.",
+                    "Grade changes represent formal registrar audits to document transcript adjustments.",
+                    "Special Programs communications represent highly targeted individual student support outreach."
+                ]
             },
-            {
-                title: "Student Contact messages by subtype",
-                desc: "Detailed results of student-directed messages",
-                cohort: "Full Dataset (14,037 messages)",
-                labels: ["Made Connection", "No Connection", "Grad Plan Fall Conf.", "Grad Plan Spring Conf.", "Enduring Connection Calls"],
-                dataPoints: [5994, 5165, 1586, 940, 352], // 42.7%, 36.8%, 11.3%, 6.7%, 2.5%
-                percents: ["42.7%", "36.8%", "11.3%", "6.7%", "2.5%"],
-                insight: "Student-directed messages are highly advising and coaching-focused, featuring much higher rates of successful graduation planning conferences and 'Made Connection' outcomes compared to parent messages."
+            "TVAH": {
+                name: "TVAH",
+                subtitle: "TVAH (SY25-26)",
+                population: 267,
+                totalMessagesNum: 70001,
+                logTypes: [
+                    { label: "Historical Notes", volume: 37533, percent: "53.6%" },
+                    { label: "Stride Email", volume: 21307, percent: "30.4%" },
+                    { label: "Student Contact", volume: 6071, percent: "8.7%" },
+                    { label: "Office", volume: 2201, percent: "3.1%" },
+                    { label: "Attendance", volume: 1796, percent: "2.6%" },
+                    { label: "Special Programs", volume: 389, percent: "0.6%" },
+                    { label: "Parent Contact", volume: 168, percent: "0.2%" },
+                    { label: "2024 PowerSchool incident", volume: 167, percent: "0.2%" },
+                    { label: "Historical Program Note", volume: 155, percent: "0.2%" },
+                    { label: "Testing", volume: 91, percent: "0.1%" }
+                ],
+                dashSubtypesData: [
+                    {
+                        title: "Parent Contact messages by subtype",
+                        desc: "Analysis of response states from Parent Contact messages",
+                        cohort: "TVAH Dataset (168 messages)",
+                        labels: ["No Subtype Entered", "Attempted Contact With LC", "Testing confirmation", "ECC", "All Others"],
+                        dataPoints: [90, 45, 18, 10, 5],
+                        percents: ["53.6%", "26.8%", "10.7%", "6.0%", "3.0%"],
+                        insight: "Parent Contact volume is very small relative to overall communications, suggesting most outreach is handled through email and student-contact channels."
+                    },
+                    {
+                        title: "Student Contact messages by subtype",
+                        desc: "Analysis of response states from Student Contact messages",
+                        cohort: "TVAH Dataset (6,071 messages)",
+                        labels: ["Student Con Unsucces", "Strong Start: Connec", "Adoc Ad Hoc", "No Subtype Entered", "All Others"],
+                        dataPoints: [3250, 1500, 680, 500, 141],
+                        percents: ["53.5%", "24.7%", "11.2%", "8.2%", "2.3%"],
+                        insight: "Student Contact logs are heavily weighted toward connection attempts and unsuccessful outreach, indicating sustained engagement and follow-up workflows."
+                    }
+                ],
+                weekday: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [13739, 14297, 13762, 13648, 12914, 399, 1242],
+                    percents: ["19.6%", "20.4%", "19.7%", "19.5%", "18.4%", "0.6%", "1.8%"]
+                },
+                monthly: {
+                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
+                    data: [836, 8107, 8913, 9991, 6991, 5352, 5735, 6486, 5198, 5391, 5427],
+                    percents: ["1.3%", "12.6%", "13.9%", "15.5%", "10.9%", "8.3%", "8.9%", "10.1%", "8.1%", "8.4%", "8.4%"]
+                },
+                lcAnnual: {
+                    labels: ["Historical Notes", "Stride Email", "Student Contact", "Office", "Attendance", "Special Programs", "Parent Contact", "2024 PowerSchool incident", "Historical Program Note", "Testing"],
+                    data: [140.57, 79.80, 22.74, 8.24, 6.73, 1.46, 0.63, 0.63, 0.58, 0.34],
+                    total: "261.72"
+                },
+                lcSubtype: {
+                    labels: ["No Subtype Entered"],
+                    data: [0.63],
+                    total: "0.63"
+                },
+                uxrInsights: [
+                    "Historical Notes dominates communication volume, indicating extensive manual documentation and legacy outreach activity.",
+                    "Stride Email is the primary scalable communication channel and accounts for nearly one-third of all logged interactions.",
+                    "Student Contact activity reflects ongoing engagement efforts, including repeated connection attempts and support outreach.",
+                    "Office records primarily support operational and registrar-related workflows.",
+                    "Attendance messaging is concentrated around intervention triggers and absenteeism monitoring.",
+                    "Special Programs communications represent targeted support populations rather than broad schoolwide outreach.",
+                    "Parent Contact interactions are comparatively rare, which may indicate heavier reliance on student-directed communication.",
+                    "PowerSchool incident notices represent a one-time compliance and notification campaign.",
+                    "Historical Program Notes function as archival records rather than active engagement communications.",
+                    "Testing communications are highly targeted and event-driven."
+                ]
             },
-            {
-                title: "Office Messages by subtype",
-                desc: "Breakdown of administrative office messages",
-                cohort: "Full Dataset (6,284 messages)",
-                labels: ["Attendance Inquiry", "Records Request", "General Office Notes"],
-                dataPoints: [3142, 1885, 1257], // 50%, 30%, 20%
-                percents: ["50.0%", "30.0%", "20.0%"],
-                insight: "Office operations focus primarily on attendance reconciliation and records administration, forming the regulatory audit trail of the enrollment process."
-            },
-            {
-                title: "Special Programs messages by subtype",
-                desc: "Touchpoint tracking for specialized student subgroups",
-                cohort: "Full Dataset (5,973 messages)",
-                labels: ["IEP Meeting Notes", "Accommodation Reviews", "ELL Progress Checks"],
-                dataPoints: [2986, 1792, 1195], // 50%, 30%, 20%
-                percents: ["50.0%", "30.0%", "20.0%"],
-                insight: "Special education messages are strictly documented to comply with state audits. IEP milestones represent half of all programs logging volume."
-            },
-            {
-                title: "Other Combined messages by subtype",
-                desc: "Ad-hoc messaging and system log audits",
-                cohort: "Full Dataset (1,871 messages)",
-                labels: ["System Automated Logs", "Manual Overrides", "External Agency Notes"],
-                dataPoints: [935, 561, 375], // 50%, 30%, 20%
-                percents: ["50.0%", "30.0%", "20.0%"],
-                insight: "System audits and external agency reports capture secondary data points that fail to group into standard intervention categories."
+            "WIVA": {
+                name: "WIVA",
+                subtitle: "WIVA (SY25-26)",
+                population: 921,
+                totalMessagesNum: 65083,
+                logTypes: [
+                    { label: "Historical Notes", volume: 32279, percent: "49.6%" },
+                    { label: "Stride Email", volume: 19179, percent: "29.5%" },
+                    { label: "Parent Contact", volume: 6922, percent: "10.6%" },
+                    { label: "Office", volume: 2225, percent: "3.4%" },
+                    { label: "Student Contact", volume: 1802, percent: "2.8%" },
+                    { label: "Re-Registration", volume: 761, percent: "1.2%" },
+                    { label: "Special Programs", volume: 735, percent: "1.1%" },
+                    { label: "Attendance", volume: 494, percent: "0.8%" },
+                    { label: "Historical Program Note", volume: 283, percent: "0.4%" },
+                    { label: "Counselor", volume: 234, percent: "0.4%" },
+                    { label: "Testing", volume: 120, percent: "0.2%" },
+                    { label: "Discipline", volume: 31, percent: "0.1%" }
+                ],
+                dashSubtypesData: [
+                    {
+                        title: "All messages by subtype",
+                        desc: "Most common logged subtypes across WIVA",
+                        cohort: "WIVA Dataset (65,083 messages)",
+                        labels: ["Historical Note", "No Subtype Entered", "WIVA HS F2P", "Adoc Ad Hoc", "A. MTSS Dean", "All Others"],
+                        dataPoints: [32272, 31779, 244, 180, 179, 429],
+                        percents: ["49.6%", "48.8%", "0.4%", "0.3%", "0.3%", "0.7%"],
+                        insight: "Nearly all communications are logged either as Historical Notes or without a structured subtype, suggesting subtype standardization opportunities."
+                    }
+                ],
+                weekday: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [11574, 13661, 11350, 12522, 14699, 192, 1085],
+                    percents: ["17.8%", "21.0%", "17.4%", "19.2%", "22.6%", "0.3%", "1.7%"]
+                },
+                monthly: {
+                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                    data: [1930, 1443, 6188, 5334, 1172, 1563, 9751, 10875, 6072, 8044, 9969, 2742],
+                    percents: ["3.0%", "2.2%", "9.5%", "8.2%", "1.8%", "2.4%", "15.0%", "16.7%", "9.3%", "12.4%", "15.3%", "4.2%"]
+                },
+                lcAnnual: {
+                    labels: ["Historical Notes", "Stride Email", "Parent Contact", "Office", "Student Contact", "Re-Registration", "Special Programs", "Attendance", "Historical Program Note", "Counselor", "Testing", "Discipline"],
+                    data: [35.05, 20.82, 7.52, 2.42, 1.96, 0.83, 0.80, 0.54, 0.31, 0.25, 0.13, 0.03],
+                    total: "70.67"
+                },
+                lcSubtype: {
+                    labels: ["No Subtype Entered", "WIVA HS F2P", "Adoc Ad Hoc", "A. MTSS Dean", "A. MTSS Mentor L", "Missed Special Education", "A. MTSS HR", "All Others"],
+                    data: [34.50, 0.26, 0.20, 0.19, 0.15, 0.12, 0.12, 0.58],
+                    total: "36.12"
+                },
+                uxrInsights: [
+                    "Historical Notes dominates communication volume, indicating extensive manual documentation and legacy outreach activity.",
+                    "Stride Email serves as the main scalable channel for automated academic alerts and announcements.",
+                    "Parent Contact constitutes a moderate portion of outreach, reflecting direct engagement with Learning Coaches.",
+                    "Office-level communications support registrar, records, and enrollment compliance workflows.",
+                    "Student Contact logs track mandatory counseling, graduation planning, and academic checkpoints.",
+                    "Re-Registration logs capture crucial end-of-year intent-to-return compliance tracking.",
+                    "Special Programs communications support IEP compliance and localized intervention check-ins.",
+                    "Attendance messages monitor absenteeism triggers and chronic truancy outreach.",
+                    "Historical Program Notes capture archive notes and legacy program tracking.",
+                    "Counselor communications represent targeted social-emotional and academic advising touchpoints.",
+                    "Testing interactions are event-driven, concentrating around state testing schedules.",
+                    "Discipline logs represent rare, administrative records for student conduct escalations."
+                ]
             }
+        };
+
+        const chartColors = [
+            "#1e3a8a", // Dark blue (focal)
+            "#2563eb", // Royal blue
+            "#3b82f6", // Medium blue
+            "#60a5fa", // Light blue
+            "#93c5fd", // Sky blue
+            "#cbd5e1", // Slate light
+            "#475569", // Slate grey
+            "#64748b", // Slate medium
+            "#94a3b8", // Slate lighter
+            "#0f172a"  // Slate darkest
         ];
 
         let dashSubtypeChartInstance = null;
@@ -628,30 +676,208 @@
         let lockedView = "logtype";
         let activeSection = "logtype";
         const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section", "lc-subtype-section"];
+        let activeSchoolKey = "AZVA";
+
+        function renderLogTypeTable(school) {
+            const tbody = document.getElementById("logtype-tbody");
+            if (!tbody) return;
+            
+            let html = "";
+            school.logTypes.forEach((item, idx) => {
+                const labelColorClass = (item.label.toLowerCase().includes("other") || item.label.toLowerCase().includes("all others")) ? "text-slate-400" : "";
+                const volColorClass = (item.label.toLowerCase().includes("other") || item.label.toLowerCase().includes("all others")) ? "text-slate-400" : "text-slate-600";
+                const pctColorClass = (item.label.toLowerCase().includes("other") || item.label.toLowerCase().includes("all others")) ? "text-slate-400 pr-2" : "text-slate-955 pr-2";
+                
+                html += `
+                    <tr class="hover:bg-slate-100/50 transition-colors cursor-pointer"
+                        id="logtype-row-${idx}" onclick="lockDashSubtype(${idx}, event)"
+                        onmouseenter="previewDashSubtype(${idx})">
+                        <td class="py-2 font-medium pl-2 ${labelColorClass}">${item.label}</td>
+                        <td class="py-2 text-right ${volColorClass}" id="logtype-vol-${idx}">${item.volume.toLocaleString()}</td>
+                        <td class="py-2 text-right font-semibold ${pctColorClass}" id="logtype-pct-${idx}">${item.percent}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                    <td class="py-2 font-bold text-slate-900 pl-2">Total</td>
+                    <td class="py-2 text-right text-slate-900" id="logtype-total-vol">${school.totalMessagesNum.toLocaleString()}</td>
+                    <td class="py-2 text-right font-bold text-slate-955 pr-2">100.0%</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = html;
+        }
+
+        function renderWeekdayTable(school) {
+            const tbody = document.getElementById("weekday-tbody");
+            if (!tbody) return;
+            
+            let peakIdx = 0;
+            let peakVal = -1;
+            school.weekday.data.forEach((val, idx) => {
+                if (val > peakVal) {
+                    peakVal = val;
+                    peakIdx = idx;
+                }
+            });
+            
+            let html = "";
+            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            
+            school.weekday.data.forEach((val, idx) => {
+                const dayName = days[idx] || school.weekday.labels[idx];
+                if (idx === peakIdx) {
+                    html += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-2 font-medium text-slate-955 font-semibold">${dayName} (Peak)</td>
+                            <td class="py-2 text-right text-slate-955 font-semibold" id="weekday-vol-${idx}">${val.toLocaleString()}</td>
+                            <td class="py-2 text-right font-bold text-slate-955 pr-2" id="weekday-pct-${idx}">${school.weekday.percents[idx]}</td>
+                        </tr>
+                    `;
+                } else {
+                    html += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-2 font-medium">${dayName}</td>
+                            <td class="py-2 text-right text-slate-600" id="weekday-vol-${idx}">${val.toLocaleString()}</td>
+                            <td class="py-2 text-right font-semibold text-slate-955 pr-2" id="weekday-pct-${idx}">${school.weekday.percents[idx]}</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            html += `
+                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                    <td class="py-2 font-bold text-slate-900 pl-2">Total</td>
+                    <td class="py-2 text-right text-slate-900" id="weekday-total-vol">${school.totalMessagesNum.toLocaleString()}</td>
+                    <td class="py-2 text-right font-bold text-slate-955 pr-2">100.0%</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = html;
+        }
+
+        function renderMonthlyTable(school) {
+            const tbody = document.getElementById("monthly-tbody");
+            if (!tbody) return;
+            
+            let html = "";
+            school.monthly.labels.forEach((label, idx) => {
+                const val = school.monthly.data[idx];
+                const pct = school.monthly.percents[idx];
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-2 font-medium">${label}</td>
+                        <td class="py-2 text-right text-slate-600" id="month-vol-${idx}">${val.toLocaleString()}</td>
+                        <td class="py-2 text-right font-semibold text-slate-955 pr-2" id="month-pct-${idx}">${pct}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                    <td class="py-2 font-bold text-slate-900 pl-2">Total</td>
+                    <td class="py-2 text-right text-slate-900" id="month-total-vol">${school.totalMessagesNum.toLocaleString()}</td>
+                    <td class="py-2 text-right font-bold text-slate-955 pr-2">100.0%</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = html;
+        }
+
+        function renderLCAnnualTable(school) {
+            const tbody = document.getElementById("lcannual-tbody");
+            if (!tbody) return;
+            
+            let html = "";
+            school.lcAnnual.data.forEach((val, idx) => {
+                const label = school.lcAnnual.labels[idx];
+                const labelColorClass = (label.toLowerCase().includes("other") || label.toLowerCase().includes("all others")) ? "text-slate-400 font-medium" : "font-medium";
+                const valColorClass = (label.toLowerCase().includes("other") || label.toLowerCase().includes("all others")) ? "text-slate-400 font-semibold pr-2" : "text-slate-955 font-semibold pr-2";
+                
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-2 ${labelColorClass}">${label}</td>
+                        <td class="py-2 text-right ${valColorClass}" id="lcannual-avg-${idx}">${val.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                    <td class="py-2 font-bold text-slate-900 pl-2">Total Average</td>
+                    <td class="py-2 text-right text-slate-955 font-bold pr-2" id="lcannual-total-avg">${parseFloat(school.lcAnnual.total).toFixed(2)}</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = html;
+        }
+
+        function renderLCSubtypeTable(school) {
+            const tbody = document.getElementById("lcsubtype-tbody");
+            if (!tbody) return;
+            
+            let html = "";
+            school.lcSubtype.data.forEach((val, idx) => {
+                const label = school.lcSubtype.labels[idx];
+                html += `
+                    <tr class="hover:bg-slate-55 transition-colors">
+                        <td class="py-2 font-medium">${label}</td>
+                        <td class="py-2 text-right font-semibold text-slate-955 pr-2" id="lcsubtype-avg-${idx}">${val.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
+                    <td class="py-2 font-bold text-slate-900 pl-2">Total Average</td>
+                    <td class="py-2 text-right text-slate-955 font-bold pr-2" id="lcsubtype-total-avg">${parseFloat(school.lcSubtype.total).toFixed(2)}</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = html;
+        }
+
+        function renderSchoolData(schoolKey) {
+            const school = schoolsData[schoolKey];
+            if (!school) return;
+            
+            // Update total messages in page subtitle
+            const titleEl = document.getElementById("dashboard-subtitle");
+            if (titleEl) {
+                titleEl.innerHTML = `PowerSchool Logged Messages<br>${school.subtitle} | Population: ${school.population.toLocaleString()} Students (Proxy for LC Households)`;
+            }
+            
+            // Update main header total
+            const totalMsgHeader = document.getElementById("school-total-messages");
+            if (totalMsgHeader) {
+                totalMsgHeader.textContent = school.totalMessagesNum.toLocaleString() + " Messages";
+            }
+            
+            // Render all tables dynamically
+            renderLogTypeTable(school);
+            renderWeekdayTable(school);
+            renderMonthlyTable(school);
+            renderLCAnnualTable(school);
+            renderLCSubtypeTable(school);
+        }
+
+        function changeSchool(schoolKey) {
+            activeSchoolKey = schoolKey;
+            renderSchoolData(schoolKey);
+            lockSection(lockedView);
+        }
 
         function updateSectionCardBorders() {
             sectionIds.forEach(id => {
                 const card = document.getElementById(id);
                 if (!card) return;
                 
-                let isLocked = false;
-                if (id === "log-type-section" && lockedView === "logtype") isLocked = true;
-                else if (id === "weekday-breakdown-section" && lockedView === "weekday") isLocked = true;
-                else if (id === "monthly-breakdown-section" && lockedView === "monthly") isLocked = true;
-                else if (id === "lc-annual-section" && lockedView === "lc-annual") isLocked = true;
-                else if (id === "lc-subtype-section" && lockedView === "lc-subtype") isLocked = true;
+                let isLocked = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === lockedView);
+                let isActive = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === activeSection);
                 
-                let isActive = false;
-                if (id === "log-type-section" && currentlyViewingSubtypes) isActive = true;
-                else if (id === "weekday-breakdown-section" && activeSection === "weekday") isActive = true;
-                else if (id === "monthly-breakdown-section" && activeSection === "monthly") isActive = true;
-                else if (id === "lc-annual-section" && activeSection === "lc-annual") isActive = true;
-                else if (id === "lc-subtype-section" && activeSection === "lc-subtype") isActive = true;
-                
-                let classes = "p-4 transition-all duration-300 rounded-xl cursor-pointer ";
-                if (id !== "log-type-section") {
-                    classes += "mt-4 ";
-                }
+                let classes = "p-4 transition-all duration-300 rounded-xl cursor-pointer " + (id !== "log-type-section" ? "mt-4 " : "");
                 
                 if (isLocked) {
                     classes += "bg-slate-50 border-2 border-slate-500 shadow-md";
@@ -666,7 +892,9 @@
         }
 
         function updateLogTypeRowStyles() {
-            for (let i = 0; i < 6; i++) {
+            const school = schoolsData[activeSchoolKey];
+            if (!school) return;
+            for (let i = 0; i < school.logTypes.length; i++) {
                 const row = document.getElementById("logtype-row-" + i);
                 if (!row) continue;
                 
@@ -693,10 +921,7 @@
                 row.className = rowClasses;
                 
                 if (firstCell) {
-                    firstCell.classList.remove("border-l-4", "border-slate-950", "border-slate-300", "border-transparent");
-                    cellBorderClasses.split(" ").forEach(cls => {
-                        if (cls) firstCell.classList.add(cls);
-                    });
+                    firstCell.className = firstCell.className.replace(/border-l-4 border-[^ ]*/g, "") + " " + cellBorderClasses;
                 }
             }
         }
@@ -727,11 +952,7 @@
                 event.stopPropagation();
             }
             lockedLogTypeIndex = index;
-            lockedView = "logtype";
-            activeSection = "logtype";
-            currentlyViewingSubtypes = true;
-            selectDashSubtype(index);
-            updateSectionCardBorders();
+            lockSection("logtype");
         }
 
         function previewDashSubtype(index) {
@@ -740,23 +961,48 @@
             currentlyViewingSubtypes = true;
             selectDashSubtype(index);
             updateSectionCardBorders();
+            updateLogTypeRowStyles();
         }
 
         function restoreLockedDashSubtype() {
             lockSection(lockedView);
         }
 
+        function clearLogTypeHighlights() {
+            currentlyViewingSubtypes = false;
+            updateLogTypeRowStyles();
+        }
+
         function selectDashSubtype(index) {
             activeLogTypeIndex = index;
-            const data = dashSubtypesData[index];
-            if (!data) return;
+            const school = schoolsData[activeSchoolKey];
+            const logType = school.logTypes[index];
+            if (!logType) return;
+
+            const labelLower = logType.label.toLowerCase();
+            let data = school.dashSubtypesData.find(d => 
+                d.title.toLowerCase().includes(labelLower) ||
+                labelLower.includes(d.title.toLowerCase().replace(" messages by subtype", ""))
+            );
+
+            if (!data) {
+                // Dynamic fallback for categories lacking raw subtype logs
+                data = {
+                    title: logType.label + " messages by subtype",
+                    desc: "General communications tracking for " + logType.label,
+                    cohort: school.name + " Dataset (" + logType.volume.toLocaleString() + " messages)",
+                    labels: ["No Subtype Entered"],
+                    dataPoints: [logType.volume],
+                    percents: ["100.0%"],
+                    insight: school.uxrInsights && school.uxrInsights[index] ? school.uxrInsights[index] : ("All logged messages under " + logType.label + " are recorded under a single general category.")
+                };
+            }
 
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "w-[clamp(16.25rem,100%,34.125rem)] h-[clamp(13.75rem,35vh,27.625rem)] relative flex justify-center md:justify-start";
             }
 
-            // Ensure subtype table is visible
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
             if (tableWrapper) {
                 tableWrapper.classList.remove("hidden");
@@ -764,39 +1010,40 @@
 
             updateLogTypeRowStyles();
 
-            // Update Text Elements
             document.getElementById("dashSubtypeCohort").textContent = data.cohort;
             document.getElementById("dashSubtypeTitle").textContent = data.title;
             document.getElementById("dashSubtypeDesc").textContent = data.desc;
             document.getElementById("dashSubtypeInsight").textContent = data.insight;
 
-            // Render Subtypes Table inside the card
             const table = document.getElementById("dashSubtypeTable");
-            table.innerHTML = `
-                    <thead>
-                        <tr class="border-b border-slate-100 text-slate-500 text-xs font-semibold">
-                            <th class="pb-2 font-semibold text-left">Subtype</th>
-                            <th class="pb-2 font-semibold text-right">Volume</th>
-                            <th class="pb-2 font-semibold text-right">% of messages</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-50 text-xs text-slate-700">
-                        ${data.labels.map((lbl, idx) => `
-                            <tr class="hover:bg-slate-50/50">
-                                <td class="py-2.5 font-medium text-left">${lbl}</td>
-                                <td class="py-2.5 text-right text-slate-600">${data.dataPoints[idx].toLocaleString()}</td>
-                                <td class="py-2.5 text-right font-bold text-slate-950">${data.percents[idx]}</td>
-                            </tr>
-                        `).join("")}
-                        <tr class="font-bold border-t border-slate-200 bg-slate-50/50">
-                            <td class="py-2.5 text-slate-900 text-left">Total</td>
-                            <td class="py-2.5 text-right text-slate-900">${data.dataPoints.reduce((a, b) => a + b, 0).toLocaleString()}</td>
-                            <td class="py-2.5 text-right text-slate-950">100.0%</td>
-                        </tr>
-                    </tbody>
-                `;
+            
+            // Build subtype table body rows dynamically without extra template escaping errors
+            let tableHtml = '<thead>' +
+                '<tr class="border-b border-slate-100 text-slate-500 text-xs font-semibold">' +
+                    '<th class="pb-2 font-semibold text-left">Subtype</th>' +
+                    '<th class="pb-2 font-semibold text-right">Volume</th>' +
+                    '<th class="pb-2 font-semibold text-right">% of messages</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody class="divide-y divide-slate-50 text-xs text-slate-700">';
+            
+            data.labels.forEach((lbl, idx) => {
+                tableHtml += '<tr class="hover:bg-slate-50/50">' +
+                    '<td class="py-2.5 font-medium text-left">' + lbl + '</td>' +
+                    '<td class="py-2.5 text-right text-slate-600">' + data.dataPoints[idx].toLocaleString() + '</td>' +
+                    '<td class="py-2.5 text-right font-bold text-slate-955 pr-2">' + data.percents[idx] + '</td>' +
+                '</tr>';
+            });
+            
+            const totalSum = data.dataPoints.reduce((a, b) => a + b, 0);
+            tableHtml += '<tr class="font-bold border-t border-slate-200 bg-slate-50/50">' +
+                '<td class="py-2.5 text-slate-900 text-left">Total</td>' +
+                '<td class="py-2.5 text-right text-slate-900">' + totalSum.toLocaleString() + '</td>' +
+                '<td class="py-2.5 text-right text-slate-955 pr-2">100.0%</td>' +
+            '</tr></tbody>';
+            
+            table.innerHTML = tableHtml;
 
-            // Update Chart.js Doughnut
             const canvas = document.getElementById("dashSubtypeChart");
             if (!canvas) return;
 
@@ -811,13 +1058,7 @@
                     labels: data.labels,
                     datasets: [{
                         data: data.dataPoints,
-                        backgroundColor: [
-                            "#1e3a8a", // Dark blue (focal)
-                            "#2563eb", // Royal blue
-                            "#60a5fa", // Light blue
-                            "#93c5fd", // Sky blue
-                            "#cbd5e1"  // Slate light
-                        ],
+                        backgroundColor: chartColors.slice(0, data.dataPoints.length),
                         borderWidth: 1.5,
                         borderColor: "#ffffff"
                     }]
@@ -839,11 +1080,6 @@
             });
         }
 
-        function clearLogTypeHighlights() {
-            currentlyViewingSubtypes = false;
-            updateLogTypeRowStyles();
-        }
-
         function showWeekdayVolumeChart() {
             activeSection = "weekday";
             clearLogTypeHighlights();
@@ -852,7 +1088,7 @@
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
             }
-            document.getElementById("dashSubtypeCohort").textContent = "Full Dataset (100,019 messages)";
+            document.getElementById("dashSubtypeCohort").textContent = schoolsData[activeSchoolKey].name + " Dataset (" + schoolsData[activeSchoolKey].totalMessagesNum.toLocaleString() + " messages)";
             document.getElementById("dashSubtypeTitle").textContent = "Weekday Messages Profile";
             document.getElementById("dashSubtypeDesc").textContent = "Logged messages mapped across the weekly cycle";
             document.getElementById("dashSubtypeInsight").textContent = "Message volume peaks heavily during midweek checkpoints (Tuesday/Thursday) to reconcile student status messages prior to weekly progress reporting closures.";
@@ -870,22 +1106,22 @@
                 dashSubtypeChartInstance.destroy();
             }
 
+            const weekdayData = schoolsData[activeSchoolKey].weekday.data;
+            const maxVal = Math.max(...weekdayData);
+            const peakIdx = weekdayData.indexOf(maxVal);
+
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
                     datasets: [{
                         label: "Messages Volume",
-                        data: [20156, 20783, 17470, 22747, 17842, 682, 339],
-                        backgroundColor: [
-                            "#1e3a8a", // Dark blue (Mon)
-                            "#1e3a8a", // Dark blue (Tue)
-                            "#1e3a8a", // Dark blue (Wed)
-                            "#2563eb", // Royal blue (Thu peak)
-                            "#1e3a8a", // Dark blue (Fri)
-                            "#cbd5e1", // Light (Sat)
-                            "#cbd5e1"  // Light (Sun)
-                        ],
+                        data: weekdayData,
+                        backgroundColor: weekdayData.map((val, idx) => {
+                            if (idx === peakIdx) return "#2563eb"; // Royal blue peak
+                            if (idx >= 5) return "#cbd5e1"; // Light grey for weekends
+                            return "#1e3a8a"; // Dark blue
+                        }),
                         borderRadius: 4,
                         borderWidth: 0
                     }]
@@ -919,18 +1155,17 @@
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
             }
-            document.getElementById("dashSubtypeCohort").textContent = "Full Dataset (100,019 messages)";
+            const school = schoolsData[activeSchoolKey];
+            document.getElementById("dashSubtypeCohort").textContent = school.name + " Dataset (" + school.totalMessagesNum.toLocaleString() + " messages)";
             document.getElementById("dashSubtypeTitle").textContent = "Messages by Month Profile";
-            document.getElementById("dashSubtypeDesc").textContent = "Total logged messages tracked chronologically (July 2025 – May 2026)";
+            document.getElementById("dashSubtypeDesc").textContent = "Total logged messages tracked chronologically (" + school.monthly.labels[0] + " – " + school.monthly.labels[school.monthly.labels.length - 1] + ")";
             document.getElementById("dashSubtypeInsight").textContent = "Message surges are driven directly by predictable academic milestones: January semester start audits, March grade checkups, and May credit recovery locks. Staffing load fluctuates heavily with these dates.";
 
-            // Hide subtype data table wrapper since it corresponds to subtypes, not chronological months
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
             if (tableWrapper) {
                 tableWrapper.classList.add("hidden");
             }
 
-            // Draw line chart (Monthly Volume trends)
             const canvas = document.getElementById("dashSubtypeChart");
             if (!canvas) return;
 
@@ -942,12 +1177,12 @@
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
+                    labels: school.monthly.labels,
                     datasets: [{
                         label: "Messages Volume",
-                        data: [23, 8500, 8305, 9200, 6123, 7200, 14487, 9787, 11549, 9446, 13461],
+                        data: school.monthly.data,
                         backgroundColor: "transparent",
-                        borderColor: "#1e3a8a", // dark blue boundary
+                        borderColor: "#1e3a8a",
                         borderWidth: 2.5,
                         fill: false,
                         pointBackgroundColor: "#2563eb",
@@ -990,10 +1225,14 @@
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
             }
-            document.getElementById("dashSubtypeCohort").textContent = "Population: 3,646 Learning Coaches";
+            const school = schoolsData[activeSchoolKey];
+            document.getElementById("dashSubtypeCohort").textContent = "Population: " + school.population.toLocaleString() + " Learning Coaches";
             document.getElementById("dashSubtypeTitle").textContent = "Learning Coach annual messages";
             document.getElementById("dashSubtypeDesc").textContent = "Average annual communication volume experienced by a single Learning Coach";
-            document.getElementById("dashSubtypeInsight").textContent = "Direct parent contacts constitute nearly half (12.75 messages) of the annual communication volume experienced by a Learning Coach, representing the core relationship channel.";
+            
+            const firstLabel = school.lcAnnual.labels[0] || "Parent Contact";
+            const firstVal = school.lcAnnual.data[0] !== undefined ? school.lcAnnual.data[0] : 0;
+            document.getElementById("dashSubtypeInsight").textContent = "Direct " + firstLabel.toLowerCase() + "s constitute a significant portion (" + firstVal.toFixed(2) + " messages) of the annual communication volume experienced by a Learning Coach.";
 
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
             if (tableWrapper) {
@@ -1011,18 +1250,11 @@
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: ["Parent Contact", "Stride Email", "Student Contact", "Office Messages", "Special Programs", "All Others"],
+                    labels: school.lcAnnual.labels,
                     datasets: [{
                         label: "Avg. Messages / Year",
-                        data: [12.75, 6.96, 3.85, 1.72, 1.64, 0.48],
-                        backgroundColor: [
-                            "#1e3a8a", // Darkest blue (12.75)
-                            "#2563eb", // Royal blue (6.96)
-                            "#3b82f6", // Medium blue (3.85)
-                            "#60a5fa", // Sky blue (1.72)
-                            "#93c5fd", // Light blue (1.64)
-                            "#cbd5e1"  // Very light blue/slate (0.48)
-                        ],
+                        data: school.lcAnnual.data,
+                        backgroundColor: chartColors.slice(0, school.lcAnnual.data.length),
                         borderRadius: 4,
                         borderWidth: 0
                     }]
@@ -1056,10 +1288,18 @@
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
             }
-            document.getElementById("dashSubtypeCohort").textContent = "Population: 3,646 Learning Coaches";
+            const school = schoolsData[activeSchoolKey];
+            document.getElementById("dashSubtypeCohort").textContent = "Population: " + school.population.toLocaleString() + " Learning Coaches";
             document.getElementById("dashSubtypeTitle").textContent = "Learning Coach subtype messages";
             document.getElementById("dashSubtypeDesc").textContent = "Average annual subtype parent connection states experienced by a single Learning Coach";
-            document.getElementById("dashSubtypeInsight").textContent = "Successful contacts (Made Connection, 2.52/year) are significantly lower than failed attempts and administrative notifications (No Connection + Attempts + General, 10.23/year).";
+            
+            const lcSubData = school.lcSubtype.data;
+            const successVal = lcSubData[2] !== undefined ? lcSubData[2] : 0;
+            let otherSum = 0;
+            lcSubData.forEach((val, idx) => {
+                if (idx !== 2) otherSum += val;
+            });
+            document.getElementById("dashSubtypeInsight").textContent = "Successful contacts (Made Connection, " + successVal.toFixed(2) + "/year) are significantly lower than failed attempts and administrative notifications (Other categories combined, " + otherSum.toFixed(2) + "/year).";
 
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
             if (tableWrapper) {
@@ -1077,16 +1317,11 @@
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: ["General / Admin", "No Connection", "Made Connection", "Connection Attempt"],
+                    labels: school.lcSubtype.labels,
                     datasets: [{
                         label: "Avg. Messages / Year",
-                        data: [5.56, 3.76, 2.52, 0.90],
-                        backgroundColor: [
-                            "#1e3a8a", // Darkest blue (5.56)
-                            "#2563eb", // Royal blue (3.76)
-                            "#3b82f6", // Medium blue (2.52)
-                            "#93c5fd"  // Light blue (0.90)
-                        ],
+                        data: lcSubData,
+                        backgroundColor: chartColors.slice(0, lcSubData.length),
                         borderRadius: 4,
                         borderWidth: 0
                     }]
@@ -1108,36 +1343,16 @@
             });
         }
 
-
-
-        function copyEmailToClipboard(el) {
-            const email = "ebrown1@k12.com";
-            navigator.clipboard.writeText(email).then(() => {
-                const textSpan = el.querySelector('span');
-                const tooltipDiv = el.querySelector('div');
-                const originalText = textSpan.textContent;
-                textSpan.textContent = "Copied!";
-                textSpan.classList.add("text-green-600", "font-bold");
-                if (tooltipDiv) tooltipDiv.style.display = 'none';
-                setTimeout(() => {
-                    textSpan.textContent = originalText;
-                    textSpan.classList.remove("text-green-600", "font-bold");
-                    if (tooltipDiv) tooltipDiv.style.display = '';
-                }, 1500);
-            }).catch(err => {
-                console.error("Failed to copy email: ", err);
-            });
-        }
-
         // Trigger default view on load
         document.addEventListener("DOMContentLoaded", () => {
+            renderSchoolData(activeSchoolKey);
             lockSection("logtype");
         });
 
         // Immediately execute in case DOMContentLoaded has already fired
+        renderSchoolData(activeSchoolKey);
         lockSection("logtype");
-
-    </script>
+</script>
 </body>
 
 </html>
