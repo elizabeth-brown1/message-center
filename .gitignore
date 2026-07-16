@@ -2,3 +2,7 @@ v1/
 # Ignore school-specific raw insight datasets
 v2/*-insights.json
 v2/*-insights.md
+v2/*-insights.JSON
+v2/*-insights.MD
+v2/LC-insights.md
+v2/full-dataset-insights.md

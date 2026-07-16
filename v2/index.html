@@ -142,11 +142,8 @@
                 <!-- School Switcher -->
                 <div class="flex flex-col gap-1 items-start">
                     <label for="school-select" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Schools</label>
-                    <select id="school-select" onchange="changeSchool(this.value)" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg p-2 focus:ring-slate-500 focus:border-slate-500 font-semibold select-none">
-                        <option value="AZVA" selected>AZVA</option>
-                        <option value="IAVA">IAVA</option>
-                        <option value="TVAH">TVAH</option>
-                        <option value="WIVA">WIVA</option>
+                    <select id="school-select" onchange="changeSchool(this.value)" class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg py-2.5 px-3 focus:ring-slate-500 focus:border-slate-500 font-semibold select-none text-base cursor-pointer min-w-[125px]">
+                        <!-- Populated dynamically by JS -->
                     </select>
                 </div>
             </header>
@@ -323,338 +320,2712 @@
     <!-- Javascript Dashboard and Table Data Handler -->
     <script>
         const schoolsData = {
-            "AZVA": {
-                name: "AZVA",
-                subtitle: "AZVA and ISAZ (SY25-26)",
-                population: 3646,
-                totalMessagesNum: 100019,
-                logTypes: [
-                    { label: "Parent Contact", volume: 46476, percent: "46.5%" },
-                    { label: "Stride Email", volume: 25378, percent: "25.4%" },
-                    { label: "Student Contact", volume: 14037, percent: "14.0%" },
-                    { label: "Office Messages", volume: 6284, percent: "6.3%" },
-                    { label: "Special Programs", volume: 5973, percent: "6.0%" },
-                    { label: "Other Combined", volume: 1871, percent: "1.8%" }
-                ],
-                dashSubtypesData: [
-                    {
-                        title: "Parent Contact messages by subtype",
-                        desc: "Analysis of response states from parent-directed messages",
-                        cohort: "AZVA Dataset (46,476 messages)",
-                        labels: ["No Connection", "Made Connection", "Connection Attempt"],
-                        dataPoints: [24307, 16313, 5856],
-                        percents: ["52.3%", "35.1%", "12.6%"],
-                        insight: "Over half of parent-directed messages result in 'No Connection'. This represents a significant operational overhead where outreach protocols consume resources without achieving contact."
-                    },
-                    {
-                        title: "Stride Email messages by subtype",
-                        desc: "Analysis of auto-reports and targeted email campaigns",
-                        cohort: "AZVA Dataset (25,378 messages)",
-                        labels: ["Weekly Progress Reports", "Missing Assignment Alerts", "General Announcements"],
-                        dataPoints: [15226, 6090, 4062],
-                        percents: ["60.0%", "24.0%", "16.0%"],
-                        insight: "Automated progress updates represent the vast majority of emails. System automation provides low-cost touchpoints but requires monitoring for engagement quality."
-                    },
-                    {
-                        title: "Student Contact messages by subtype",
-                        desc: "Detailed results of student-directed messages",
-                        cohort: "AZVA Dataset (14,037 messages)",
-                        labels: ["Made Connection", "No Connection", "Grad Plan Fall Conf.", "Grad Plan Spring Conf.", "Enduring Connection Calls"],
-                        dataPoints: [5965, 5263, 1586, 877, 346],
-                        percents: ["42.5%", "37.5%", "11.3%", "6.3%", "2.5%"],
-                        insight: "Student-directed touchpoints show higher connection success rates (42.5%) than parent calls, driven by mandatory academic counseling sessions."
-                    },
-                    {
-                        title: "Office Messages by subtype",
-                        desc: "Breakdown of administrative office messages",
-                        cohort: "AZVA Dataset (6,284 messages)",
-                        labels: ["Attendance Inquiry", "Records Request", "General Office Notes"],
-                        dataPoints: [3142, 1885, 1257],
-                        percents: ["50.0%", "30.0%", "20.0%"],
-                        insight: "Office operations focus primarily on attendance reconciliation and records administration, forming the regulatory audit trail of the enrollment process."
-                    },
-                    {
-                        title: "Special Programs messages by subtype",
-                        desc: "Touchpoint tracking for specialized student subgroups",
-                        cohort: "AZVA Dataset (5,973 messages)",
-                        labels: ["IEP Meeting Notes", "Accommodation Reviews", "ELL Progress Checks"],
-                        dataPoints: [2986, 1792, 1195],
-                        percents: ["50.0%", "30.0%", "20.0%"],
-                        insight: "Special education messages are strictly documented to comply with state audits. IEP milestones represent half of all programs logging volume."
-                    },
-                    {
-                        title: "Other Combined messages by subtype",
-                        desc: "Ad-hoc messaging and system log audits",
-                        cohort: "AZVA Dataset (1,871 messages)",
-                        labels: ["System Automated Logs", "Manual Overrides", "External Agency Notes"],
-                        dataPoints: [935, 561, 375],
-                        percents: ["50.0%", "30.0%", "20.0%"],
-                        insight: "System audits and external agency reports capture secondary data points that fail to group into standard intervention categories."
-                    }
-                ],
-                weekday: {
-                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    data: [20156, 20783, 17470, 22747, 17842, 682, 339],
-                    percents: ["20.2%", "20.8%", "17.5%", "22.7%", "17.8%", "0.7%", "0.3%"]
-                },
-                monthly: {
-                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
-                    data: [23, 8500, 8305, 9200, 6123, 7200, 14487, 9787, 11549, 9446, 13461],
-                    percents: ["0.02%", "8.50%", "8.30%", "9.20%", "6.12%", "7.20%", "14.48%", "9.79%", "11.55%", "9.44%", "13.46%"]
-                },
-                lcAnnual: {
-                    labels: ["Parent Contact", "Stride Email", "Student Contact", "Office Messages", "Special Programs", "All Others"],
-                    data: [12.75, 6.96, 3.85, 1.72, 1.64, 0.48],
-                    total: "27.40"
-                },
-                lcSubtype: {
-                    labels: ["General Outreach / Administrative", "Unsuccessful Contact (No Connection)", "Successful Contact (Made Connection)", "Additional Connection Attempts"],
-                    data: [5.56, 3.76, 2.52, 0.90],
-                    total: "12.75"
-                }
+    "AZVA": {
+        "name": "AZVA",
+        "subtitle": "AZVA (SY25-26)",
+        "population": 291,
+        "totalMessagesNum": 9220,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 3106,
+                "percent": "33.7%"
             },
-            "IAVA": {
-                name: "IAVA",
-                subtitle: "IAVA (SY25-26)",
-                population: 1422,
-                totalMessagesNum: 62373,
-                logTypes: [
-                    { label: "Stride Email", volume: 34077, percent: "54.6%" },
-                    { label: "Historical Notes", volume: 24997, percent: "40.1%" },
-                    { label: "Student Contact", volume: 1866, percent: "3.0%" },
-                    { label: "Parent Contact", volume: 681, percent: "1.1%" },
-                    { label: "Attendance", volume: 400, percent: "0.6%" },
-                    { label: "Historical Program Note", volume: 174, percent: "0.3%" },
-                    { label: "Counselor", volume: 81, percent: "0.1%" },
-                    { label: "Re-Registration", volume: 63, percent: "0.1%" },
-                    { label: "Grade Change", volume: 23, percent: "0.0%" },
-                    { label: "Special Programs", volume: 5, percent: "0.0%" }
-                ],
-                dashSubtypesData: [
-                    {
-                        title: "Stride Email messages by subtype",
-                        desc: "Analysis of response states from Stride Email messages",
-                        cohort: "IAVA Dataset (34,077 messages)",
-                        labels: ["No Subtype Entered", "All Others"],
-                        dataPoints: [33997, 80],
-                        percents: ["99.8%", "0.2%"],
-                        insight: "Stride Email is the dominant outreach channel, accounting for more than half of all logged communication activity."
-                    },
-                    {
-                        title: "Historical Notes messages by subtype",
-                        desc: "Analysis of response states from Historical Notes messages",
-                        cohort: "IAVA Dataset (24,997 messages)",
-                        labels: ["Historical Note"],
-                        dataPoints: [24997],
-                        percents: ["100.0%"],
-                        insight: "Historical Notes function as the primary archival communication record across the school year."
-                    },
-                    {
-                        title: "Student Contact messages by subtype",
-                        desc: "Analysis of response states from Student Contact messages",
-                        cohort: "IAVA Dataset (1,866 messages)",
-                        labels: ["No Subtype Entered", "Strong Start Welcome", "Strong Start: Connec", "Advocacy: Ad Hoc"],
-                        dataPoints: [1828, 35, 2, 1],
-                        percents: ["98.0%", "1.9%", "0.1%", "0.1%"],
-                        insight: "Most student outreach is logged without a subtype, suggesting lightweight direct engagement workflows."
-                    },
-                    {
-                        title: "Parent Contact messages by subtype",
-                        desc: "Analysis of response states from Parent Contact messages",
-                        cohort: "IAVA Dataset (681 messages)",
-                        labels: ["No Subtype Entered"],
-                        dataPoints: [681],
-                        percents: ["100.0%"],
-                        insight: "Parent outreach volume is relatively low and subtype usage is not standardized."
-                    },
-                    {
-                        title: "Attendance messages by subtype",
-                        desc: "Analysis of response states from Attendance messages",
-                        cohort: "IAVA Dataset (400 messages)",
-                        labels: ["No Subtype Entered"],
-                        dataPoints: [400],
-                        percents: ["100.0%"],
-                        insight: "Attendance communications are targeted and represent a small operational share of total messaging."
-                    },
-                    {
-                        title: "Counselor messages by subtype",
-                        desc: "Analysis of response states from Counselor messages",
-                        cohort: "IAVA Dataset (81 messages)",
-                        labels: ["No Subtype Entered"],
-                        dataPoints: [81],
-                        percents: ["100.0%"],
-                        insight: "Counselor interactions are highly selective and reserved for specific student support cases."
-                    }
-                ],
-                weekday: {
-                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    data: [12891, 14190, 10574, 11249, 11099, 1004, 1366],
-                    percents: ["20.7%", "22.8%", "17.0%", "18.0%", "17.8%", "1.6%", "2.2%"]
-                },
-                monthly: {
-                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
-                    data: [37, 6306, 4748, 4888, 957, 1884, 9696, 8778, 10860, 5880, 8079],
-                    percents: ["0.1%", "10.1%", "7.6%", "7.8%", "1.5%", "3.0%", "15.5%", "14.1%", "17.4%", "9.4%", "13.0%"]
-                },
-                lcAnnual: {
-                    labels: ["Stride Email", "Historical Notes", "Student Contact", "Parent Contact", "Attendance", "Historical Program Note", "Counselor", "Re-Registration", "Grade Change", "Special Programs"],
-                    data: [23.96, 17.58, 1.31, 0.48, 0.28, 0.12, 0.06, 0.04, 0.02, 0.00],
-                    total: "43.85"
-                },
-                lcSubtype: {
-                    labels: ["No Subtype Entered"],
-                    data: [0.48],
-                    total: "0.48"
-                },
-                uxrInsights: [
-                    "Stride Email is the dominant outreach channel, accounting for more than half of all logged communication activity.",
-                    "Historical Notes function as the primary archival communication record across the school year.",
-                    "Most student outreach is logged without a subtype, suggesting lightweight direct engagement workflows.",
-                    "Parent outreach volume is relatively low and subtype usage is not standardized.",
-                    "Attendance communications are targeted and represent a small operational share of total messaging.",
-                    "Historical Program Notes capture archival notes and legacy program tracking.",
-                    "Counselor interactions are highly selective and reserved for specific student support cases.",
-                    "Re-Registration logs capture crucial end-of-year intent-to-return compliance tracking.",
-                    "Grade changes represent formal registrar audits to document transcript adjustments.",
-                    "Special Programs communications represent highly targeted individual student support outreach."
-                ]
+            {
+                "label": "Parent Contact",
+                "volume": 2905,
+                "percent": "31.5%"
             },
-            "TVAH": {
-                name: "TVAH",
-                subtitle: "TVAH (SY25-26)",
-                population: 267,
-                totalMessagesNum: 70001,
-                logTypes: [
-                    { label: "Historical Notes", volume: 37533, percent: "53.6%" },
-                    { label: "Stride Email", volume: 21307, percent: "30.4%" },
-                    { label: "Student Contact", volume: 6071, percent: "8.7%" },
-                    { label: "Office", volume: 2201, percent: "3.1%" },
-                    { label: "Attendance", volume: 1796, percent: "2.6%" },
-                    { label: "Special Programs", volume: 389, percent: "0.6%" },
-                    { label: "Parent Contact", volume: 168, percent: "0.2%" },
-                    { label: "2024 PowerSchool incident", volume: 167, percent: "0.2%" },
-                    { label: "Historical Program Note", volume: 155, percent: "0.2%" },
-                    { label: "Testing", volume: 91, percent: "0.1%" }
-                ],
-                dashSubtypesData: [
-                    {
-                        title: "Parent Contact messages by subtype",
-                        desc: "Analysis of response states from Parent Contact messages",
-                        cohort: "TVAH Dataset (168 messages)",
-                        labels: ["No Subtype Entered", "Attempted Contact With LC", "Testing confirmation", "ECC", "All Others"],
-                        dataPoints: [90, 45, 18, 10, 5],
-                        percents: ["53.6%", "26.8%", "10.7%", "6.0%", "3.0%"],
-                        insight: "Parent Contact volume is very small relative to overall communications, suggesting most outreach is handled through email and student-contact channels."
-                    },
-                    {
-                        title: "Student Contact messages by subtype",
-                        desc: "Analysis of response states from Student Contact messages",
-                        cohort: "TVAH Dataset (6,071 messages)",
-                        labels: ["Student Con Unsucces", "Strong Start: Connec", "Adoc Ad Hoc", "No Subtype Entered", "All Others"],
-                        dataPoints: [3250, 1500, 680, 500, 141],
-                        percents: ["53.5%", "24.7%", "11.2%", "8.2%", "2.3%"],
-                        insight: "Student Contact logs are heavily weighted toward connection attempts and unsuccessful outreach, indicating sustained engagement and follow-up workflows."
-                    }
-                ],
-                weekday: {
-                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    data: [13739, 14297, 13762, 13648, 12914, 399, 1242],
-                    percents: ["19.6%", "20.4%", "19.7%", "19.5%", "18.4%", "0.6%", "1.8%"]
-                },
-                monthly: {
-                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May"],
-                    data: [836, 8107, 8913, 9991, 6991, 5352, 5735, 6486, 5198, 5391, 5427],
-                    percents: ["1.3%", "12.6%", "13.9%", "15.5%", "10.9%", "8.3%", "8.9%", "10.1%", "8.1%", "8.4%", "8.4%"]
-                },
-                lcAnnual: {
-                    labels: ["Historical Notes", "Stride Email", "Student Contact", "Office", "Attendance", "Special Programs", "Parent Contact", "2024 PowerSchool incident", "Historical Program Note", "Testing"],
-                    data: [140.57, 79.80, 22.74, 8.24, 6.73, 1.46, 0.63, 0.63, 0.58, 0.34],
-                    total: "261.72"
-                },
-                lcSubtype: {
-                    labels: ["No Subtype Entered"],
-                    data: [0.63],
-                    total: "0.63"
-                },
-                uxrInsights: [
-                    "Historical Notes dominates communication volume, indicating extensive manual documentation and legacy outreach activity.",
-                    "Stride Email is the primary scalable communication channel and accounts for nearly one-third of all logged interactions.",
-                    "Student Contact activity reflects ongoing engagement efforts, including repeated connection attempts and support outreach.",
-                    "Office records primarily support operational and registrar-related workflows.",
-                    "Attendance messaging is concentrated around intervention triggers and absenteeism monitoring.",
-                    "Special Programs communications represent targeted support populations rather than broad schoolwide outreach.",
-                    "Parent Contact interactions are comparatively rare, which may indicate heavier reliance on student-directed communication.",
-                    "PowerSchool incident notices represent a one-time compliance and notification campaign.",
-                    "Historical Program Notes function as archival records rather than active engagement communications.",
-                    "Testing communications are highly targeted and event-driven."
-                ]
+            {
+                "label": "Student Contact",
+                "volume": 1666,
+                "percent": "18.1%"
             },
-            "WIVA": {
-                name: "WIVA",
-                subtitle: "WIVA (SY25-26)",
-                population: 921,
-                totalMessagesNum: 65083,
-                logTypes: [
-                    { label: "Historical Notes", volume: 32279, percent: "49.6%" },
-                    { label: "Stride Email", volume: 19179, percent: "29.5%" },
-                    { label: "Parent Contact", volume: 6922, percent: "10.6%" },
-                    { label: "Office", volume: 2225, percent: "3.4%" },
-                    { label: "Student Contact", volume: 1802, percent: "2.8%" },
-                    { label: "Re-Registration", volume: 761, percent: "1.2%" },
-                    { label: "Special Programs", volume: 735, percent: "1.1%" },
-                    { label: "Attendance", volume: 494, percent: "0.8%" },
-                    { label: "Historical Program Note", volume: 283, percent: "0.4%" },
-                    { label: "Counselor", volume: 234, percent: "0.4%" },
-                    { label: "Testing", volume: 120, percent: "0.2%" },
-                    { label: "Discipline", volume: 31, percent: "0.1%" }
-                ],
-                dashSubtypesData: [
-                    {
-                        title: "All messages by subtype",
-                        desc: "Most common logged subtypes across WIVA",
-                        cohort: "WIVA Dataset (65,083 messages)",
-                        labels: ["Historical Note", "No Subtype Entered", "WIVA HS F2P", "Adoc Ad Hoc", "A. MTSS Dean", "All Others"],
-                        dataPoints: [32272, 31779, 244, 180, 179, 429],
-                        percents: ["49.6%", "48.8%", "0.4%", "0.3%", "0.3%", "0.7%"],
-                        insight: "Nearly all communications are logged either as Historical Notes or without a structured subtype, suggesting subtype standardization opportunities."
-                    }
-                ],
-                weekday: {
-                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    data: [11574, 13661, 11350, 12522, 14699, 192, 1085],
-                    percents: ["17.8%", "21.0%", "17.4%", "19.2%", "22.6%", "0.3%", "1.7%"]
-                },
-                monthly: {
-                    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                    data: [1930, 1443, 6188, 5334, 1172, 1563, 9751, 10875, 6072, 8044, 9969, 2742],
-                    percents: ["3.0%", "2.2%", "9.5%", "8.2%", "1.8%", "2.4%", "15.0%", "16.7%", "9.3%", "12.4%", "15.3%", "4.2%"]
-                },
-                lcAnnual: {
-                    labels: ["Historical Notes", "Stride Email", "Parent Contact", "Office", "Student Contact", "Re-Registration", "Special Programs", "Attendance", "Historical Program Note", "Counselor", "Testing", "Discipline"],
-                    data: [35.05, 20.82, 7.52, 2.42, 1.96, 0.83, 0.80, 0.54, 0.31, 0.25, 0.13, 0.03],
-                    total: "70.67"
-                },
-                lcSubtype: {
-                    labels: ["No Subtype Entered", "WIVA HS F2P", "Adoc Ad Hoc", "A. MTSS Dean", "A. MTSS Mentor L", "Missed Special Education", "A. MTSS HR", "All Others"],
-                    data: [34.50, 0.26, 0.20, 0.19, 0.15, 0.12, 0.12, 0.58],
-                    total: "36.12"
-                },
-                uxrInsights: [
-                    "Historical Notes dominates communication volume, indicating extensive manual documentation and legacy outreach activity.",
-                    "Stride Email serves as the main scalable channel for automated academic alerts and announcements.",
-                    "Parent Contact constitutes a moderate portion of outreach, reflecting direct engagement with Learning Coaches.",
-                    "Office-level communications support registrar, records, and enrollment compliance workflows.",
-                    "Student Contact logs track mandatory counseling, graduation planning, and academic checkpoints.",
-                    "Re-Registration logs capture crucial end-of-year intent-to-return compliance tracking.",
-                    "Special Programs communications support IEP compliance and localized intervention check-ins.",
-                    "Attendance messages monitor absenteeism triggers and chronic truancy outreach.",
-                    "Historical Program Notes capture archive notes and legacy program tracking.",
-                    "Counselor communications represent targeted social-emotional and academic advising touchpoints.",
-                    "Testing interactions are event-driven, concentrating around state testing schedules.",
-                    "Discipline logs represent rare, administrative records for student conduct escalations."
-                ]
+            {
+                "label": "Special Programs",
+                "volume": 796,
+                "percent": "8.6%"
+            },
+            {
+                "label": "Office",
+                "volume": 572,
+                "percent": "6.2%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 110,
+                "percent": "1.2%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 55,
+                "percent": "0.6%"
+            },
+            {
+                "label": "Historical Notes",
+                "volume": 3,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 3,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Testing",
+                "volume": 3,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 1,
+                "percent": "0.0%"
             }
-        };
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Attendance messages by subtype",
+                "desc": "Analysis of response states from Attendance messages",
+                "cohort": "AZVA Dataset (3 messages)",
+                "labels": [
+                    "Last Login",
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    2,
+                    1
+                ],
+                "percents": [
+                    "66.7%",
+                    "33.3%"
+                ],
+                "insight": "Attendance accounts for 0.0% of outreach activity."
+            },
+            {
+                "title": "Counselor messages by subtype",
+                "desc": "Analysis of response states from Counselor messages",
+                "cohort": "AZVA Dataset (55 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "GradPlan Conf Fall"
+                ],
+                "dataPoints": [
+                    54,
+                    1
+                ],
+                "percents": [
+                    "98.2%",
+                    "1.8%"
+                ],
+                "insight": "Counselor accounts for 0.6% of outreach activity."
+            },
+            {
+                "title": "Discipline messages by subtype",
+                "desc": "Analysis of response states from Discipline messages",
+                "cohort": "AZVA Dataset (1 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    1
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Discipline accounts for 0.0% of outreach activity."
+            },
+            {
+                "title": "Historical Notes messages by subtype",
+                "desc": "Analysis of response states from Historical Notes messages",
+                "cohort": "AZVA Dataset (3 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Historical Note"
+                ],
+                "dataPoints": [
+                    2,
+                    1
+                ],
+                "percents": [
+                    "66.7%",
+                    "33.3%"
+                ],
+                "insight": "Historical Notes accounts for 0.0% of outreach activity."
+            },
+            {
+                "title": "Office messages by subtype",
+                "desc": "Analysis of response states from Office messages",
+                "cohort": "AZVA Dataset (572 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    572
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Office accounts for 6.2% of outreach activity."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "AZVA Dataset (2905 messages)",
+                "labels": [
+                    "No Connection",
+                    "No Subtype Entered",
+                    "Made Connection",
+                    "Connection Attempt P",
+                    "0"
+                ],
+                "dataPoints": [
+                    1099,
+                    967,
+                    514,
+                    319,
+                    6
+                ],
+                "percents": [
+                    "37.8%",
+                    "33.3%",
+                    "17.7%",
+                    "11.0%",
+                    "0.2%"
+                ],
+                "insight": "Parent Contact accounts for 31.5% of outreach activity."
+            },
+            {
+                "title": "Re-Registration messages by subtype",
+                "desc": "Analysis of response states from Re-Registration messages",
+                "cohort": "AZVA Dataset (110 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "No Connection"
+                ],
+                "dataPoints": [
+                    108,
+                    2
+                ],
+                "percents": [
+                    "98.2%",
+                    "1.8%"
+                ],
+                "insight": "Re-Registration accounts for 1.2% of outreach activity."
+            },
+            {
+                "title": "Special Programs messages by subtype",
+                "desc": "Analysis of response states from Special Programs messages",
+                "cohort": "AZVA Dataset (796 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Last Login"
+                ],
+                "dataPoints": [
+                    793,
+                    3
+                ],
+                "percents": [
+                    "99.6%",
+                    "0.4%"
+                ],
+                "insight": "Special Programs accounts for 8.6% of outreach activity."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                1687,
+                2073,
+                1623,
+                1988,
+                1767,
+                56,
+                26
+            ],
+            "percents": [
+                "18.3%",
+                "22.5%",
+                "17.6%",
+                "21.6%",
+                "19.2%",
+                "0.6%",
+                "0.3%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun"
+            ],
+            "data": [
+                86,
+                765,
+                737,
+                648,
+                678,
+                839,
+                1302,
+                717,
+                1078,
+                735,
+                1366,
+                269
+            ],
+            "percents": [
+                "0.9%",
+                "8.3%",
+                "8.0%",
+                "7.0%",
+                "7.4%",
+                "9.1%",
+                "14.1%",
+                "7.8%",
+                "11.7%",
+                "8.0%",
+                "14.8%",
+                "2.9%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Student Contact",
+                "Special Programs",
+                "Office",
+                "Re-Registration",
+                "Counselor",
+                "Historical Notes",
+                "Attendance",
+                "Testing",
+                "Discipline"
+            ],
+            "data": [
+                10.67,
+                9.98,
+                5.73,
+                2.74,
+                1.97,
+                0.38,
+                0.19,
+                0.01,
+                0.01,
+                0.01,
+                0
+            ],
+            "total": "31.68"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Connection",
+                "No Subtype Entered",
+                "Made Connection",
+                "Connection Attempt P",
+                "0"
+            ],
+            "data": [
+                3.78,
+                3.32,
+                1.77,
+                1.1,
+                0.02
+            ],
+            "total": "9.98"
+        },
+        "uxrInsights": null
+    },
+    "DAOF": {
+        "name": "DAOF",
+        "subtitle": "DAOF (SY25-26)",
+        "population": 138,
+        "totalMessagesNum": 25642,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 20346,
+                "percent": "79.4%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 1877,
+                "percent": "7.3%"
+            },
+            {
+                "label": "Office",
+                "volume": 1025,
+                "percent": "4.0%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 828,
+                "percent": "3.2%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 776,
+                "percent": "3.0%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 327,
+                "percent": "1.3%"
+            },
+            {
+                "label": "Testing",
+                "volume": 272,
+                "percent": "1.1%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 106,
+                "percent": "0.4%"
+            },
+            {
+                "label": "Historical Notes",
+                "volume": 71,
+                "percent": "0.3%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 10,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Historical Program Note",
+                "volume": 2,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 2,
+                "percent": "0.0%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "DAOF Dataset (1877 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Blank/Whitespace Entered",
+                    "Middle School Learni"
+                ],
+                "dataPoints": [
+                    3,
+                    1873,
+                    1
+                ],
+                "percents": [
+                    "0.2%",
+                    "99.7%",
+                    "0.1%"
+                ],
+                "insight": "Parent Contact logging is heavily reliant on free-text subjects rather than structured subtype tagging, limiting downstream reporting precision."
+            },
+            {
+                "title": "Special Programs messages by subtype",
+                "desc": "Analysis of response states from Special Programs messages",
+                "cohort": "DAOF Dataset (327 messages)",
+                "labels": [
+                    "ECC-Special Programs",
+                    "ECC Attempt-Special",
+                    "Office Hours",
+                    "ECC Special Programs",
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "percents": [],
+                "insight": "Special Programs outreach is primarily centered on Enduring Connection Call workflows and targeted student support follow-up."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                4851,
+                5183,
+                4314,
+                5000,
+                5099,
+                534,
+                661
+            ],
+            "percents": [
+                "18.9%",
+                "20.2%",
+                "16.8%",
+                "19.5%",
+                "19.9%",
+                "2.1%",
+                "2.6%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                282,
+                1833,
+                2034,
+                2478,
+                1533,
+                3027,
+                2248,
+                3017,
+                2615,
+                2962,
+                3262
+            ],
+            "percents": [
+                "1.1%",
+                "7.2%",
+                "7.9%",
+                "9.7%",
+                "6.0%",
+                "11.8%",
+                "8.8%",
+                "11.8%",
+                "10.2%",
+                "11.6%",
+                "12.7%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Office",
+                "Attendance",
+                "Student Contact",
+                "Special Programs",
+                "Testing",
+                "Counselor",
+                "Historical Notes",
+                "Re-Registration",
+                "Historical Program Note",
+                "Discipline"
+            ],
+            "data": [
+                147.43,
+                13.6,
+                7.43,
+                6,
+                5.62,
+                2.37,
+                1.97,
+                0.77,
+                0.51,
+                0.07,
+                0.01,
+                0.01
+            ],
+            "total": "185.79"
+        },
+        "lcSubtype": {
+            "labels": [
+                "Blank/Whitespace Entered",
+                "No Subtype Entered",
+                "Middle School Learni"
+            ],
+            "data": [
+                13.57,
+                0.02,
+                0.01
+            ],
+            "total": "13.60"
+        },
+        "uxrInsights": [
+            "Stride Email dominates communication volume, indicating the school relies primarily on scalable broadcast outreach.",
+            "Parent Contact activity reflects targeted relationship-building and onboarding support throughout the year.",
+            "Office logs are concentrated around operational needs such as hardware, enrollment, and documentation support.",
+            "Attendance logging shows sustained monitoring of student participation and compliance.",
+            "Student Contact interactions emphasize direct outreach and connection-building with learners.",
+            "Special Programs communications focus on intervention, support, and Enduring Connection workflows.",
+            "Testing communications are episodic and aligned to assessment windows and FAST administration periods.",
+            "Counselor activity is low volume but likely high touch, serving specialized student needs.",
+            "Historical Notes provide recordkeeping rather than active communication touchpoints.",
+            "Re-Registration activity is highly seasonal and represents a minimal share of total outreach."
+        ]
+    },
+    "IAVA": {
+        "name": "IAVA",
+        "subtitle": "IAVA (SY25-26)",
+        "population": 1423,
+        "totalMessagesNum": 37201,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 34077,
+                "percent": "91.60%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 1866,
+                "percent": "5.02%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 681,
+                "percent": "1.83%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 400,
+                "percent": "1.08%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 72,
+                "percent": "0.19%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 63,
+                "percent": "0.17%"
+            },
+            {
+                "label": "Grade Change",
+                "volume": 23,
+                "percent": "0.06%"
+            },
+            {
+                "label": "Historical Program Note",
+                "volume": 8,
+                "percent": "0.02%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 5,
+                "percent": "0.01%"
+            },
+            {
+                "label": "Office",
+                "volume": 3,
+                "percent": "0.01%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 2,
+                "percent": "0.01%"
+            },
+            {
+                "label": "Health",
+                "volume": 1,
+                "percent": "0.00%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Stride Email messages by subtype",
+                "desc": "Analysis of response states from Stride Email messages",
+                "cohort": "IAVA Dataset (34077 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    34077
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Stride Email overwhelmingly dominates communications, reflecting a highly automated, digital-first notification baseline for operational touchpoints."
+            },
+            {
+                "title": "Student Contact messages by subtype",
+                "desc": "Analysis of response states from Student Contact messages",
+                "cohort": "IAVA Dataset (1866 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Strong Start Welcome",
+                    "Strong Start: Connec",
+                    "Advocacy: Ad Hoc",
+                    "Enduring ConnectCall",
+                    "Student Con Unsucces"
+                ],
+                "dataPoints": [
+                    1502,
+                    234,
+                    80,
+                    39,
+                    10,
+                    1
+                ],
+                "percents": [
+                    "80.49%",
+                    "12.54%",
+                    "4.29%",
+                    "2.09%",
+                    "0.54%",
+                    "0.05%"
+                ],
+                "insight": "Direct Student Contacts show a healthy engagement pattern concentrated around early-semester onboarding and specialized outreach efforts."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "IAVA Dataset (681 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    681
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Parent contact logging lacks granular subtype detail, indicating a potential area to improve tracking of distinct parental engagement initiatives."
+            },
+            {
+                "title": "Attendance messages by subtype",
+                "desc": "Analysis of response states from Attendance messages",
+                "cohort": "IAVA Dataset (400 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Attendance:  10-day"
+                ],
+                "dataPoints": [
+                    399,
+                    1
+                ],
+                "percents": [
+                    "99.75%",
+                    "0.25%"
+                ],
+                "insight": "Attendance-related logs are highly concentrated under un-subtyped records, pointing to a simplified, high-level process for tracking attendance issues."
+            },
+            {
+                "title": "Counselor messages by subtype",
+                "desc": "Analysis of response states from Counselor messages",
+                "cohort": "IAVA Dataset (72 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    72
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Counselor touchpoints represent specialized, low-frequency interventions tailored to academic progress and student emotional support."
+            },
+            {
+                "title": "Re-Registration messages by subtype",
+                "desc": "Analysis of response states from Re-Registration messages",
+                "cohort": "IAVA Dataset (63 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    63
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Re-registration outreach peaks in designated seasonal windows to secure student commitments for the upcoming academic school year."
+            },
+            {
+                "title": "Grade Change messages by subtype",
+                "desc": "Analysis of response states from Grade Change messages",
+                "cohort": "IAVA Dataset (23 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    23
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Grade change entries represent administrative corrections that are processed steadily in small volumes across grading periods."
+            },
+            {
+                "title": "Historical Program Note messages by subtype",
+                "desc": "Analysis of response states from Historical Program Note messages",
+                "cohort": "IAVA Dataset (8 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    8
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Historical program notes serve as crucial documentation reference points for tracking multi-year longitudinal student profiles."
+            },
+            {
+                "title": "Special Programs messages by subtype",
+                "desc": "Analysis of response states from Special Programs messages",
+                "cohort": "IAVA Dataset (5 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    5
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Special programs logging captures low-volume, highly individualized tracking of students requiring specific accommodations."
+            },
+            {
+                "title": "Office messages by subtype",
+                "desc": "Analysis of response states from Office messages",
+                "cohort": "IAVA Dataset (3 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    3
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Office-level communications capture general inquiries and administrative routing not classified under specific academic categories."
+            },
+            {
+                "title": "Discipline messages by subtype",
+                "desc": "Analysis of response states from Discipline messages",
+                "cohort": "IAVA Dataset (2 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    2
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Discipline logs show an exceptionally low frequency, demonstrating a positive, highly compliant school climate."
+            },
+            {
+                "title": "Health messages by subtype",
+                "desc": "Analysis of response states from Health messages",
+                "cohort": "IAVA Dataset (1 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    1
+                ],
+                "percents": [
+                    "100.00%"
+                ],
+                "insight": "Health-related logged entries are rare administrative touchpoints, primarily documenting critical student wellness requirements."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                6982,
+                9344,
+                6767,
+                6074,
+                6885,
+                654,
+                495
+            ],
+            "percents": [
+                "18.77%",
+                "25.12%",
+                "18.19%",
+                "16.33%",
+                "18.51%",
+                "1.76%",
+                "1.33%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul '25",
+                "Aug '25",
+                "Sep '25",
+                "Oct '25",
+                "Nov '25",
+                "Dec '25",
+                "Jan '26",
+                "Feb '26",
+                "Mar '26",
+                "Apr '26",
+                "May '26",
+                "Jun '26",
+                "Jul '26"
+            ],
+            "data": [
+                6,
+                6306,
+                4748,
+                4888,
+                957,
+                1875,
+                4936,
+                2946,
+                4926,
+                1695,
+                3793,
+                94,
+                31
+            ],
+            "percents": [
+                "0.02%",
+                "16.95%",
+                "12.76%",
+                "13.14%",
+                "2.57%",
+                "5.04%",
+                "13.27%",
+                "7.92%",
+                "13.24%",
+                "4.56%",
+                "10.20%",
+                "0.25%",
+                "0.08%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Student Contact",
+                "Parent Contact",
+                "Attendance",
+                "Counselor",
+                "Re-Registration",
+                "Grade Change",
+                "Historical Program Note",
+                "Special Programs",
+                "Office",
+                "Discipline",
+                "Health"
+            ],
+            "data": [
+                23.96,
+                1.31,
+                0.48,
+                0.28,
+                0.05,
+                0.04,
+                0.02,
+                0.01,
+                0,
+                0,
+                0,
+                0
+            ],
+            "total": "26.15"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered"
+            ],
+            "data": [
+                0.48
+            ],
+            "total": "0.48"
+        },
+        "uxrInsights": null
+    },
+    "IDVA": {
+        "name": "IDVA",
+        "subtitle": "IDVA (SY25-26)",
+        "population": 1388,
+        "totalMessagesNum": 42650,
+        "logTypes": [
+            {
+                "label": "Office",
+                "volume": 14487,
+                "percent": "34.0%"
+            },
+            {
+                "label": "Stride Email",
+                "volume": 8625,
+                "percent": "20.2%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 8198,
+                "percent": "19.2%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 7500,
+                "percent": "17.6%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 1728,
+                "percent": "4.1%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 1174,
+                "percent": "2.8%"
+            },
+            {
+                "label": "2024 PowerSchool incident",
+                "volume": 569,
+                "percent": "1.3%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 283,
+                "percent": "0.7%"
+            },
+            {
+                "label": "Placement (onboarding)",
+                "volume": 33,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 26,
+                "percent": "0.1%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Office messages by subtype",
+                "desc": "Analysis of response states from Office messages",
+                "cohort": "IDVA Dataset (14487 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "SC Contact Attempt",
+                    "SC Indirect Student",
+                    "SC Direct Student Se",
+                    "ECC Attempt 1",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    7319,
+                    4238,
+                    651,
+                    528,
+                    397,
+                    1354
+                ],
+                "percents": [
+                    "50.5%",
+                    "29.3%",
+                    "4.5%",
+                    "3.6%",
+                    "2.7%",
+                    "9.3%"
+                ],
+                "insight": "Office communications dominate the dataset and are primarily operational outreach, with contact attempts representing the largest structured workflow."
+            },
+            {
+                "title": "Stride Email messages by subtype",
+                "desc": "Analysis of response states from Stride Email messages",
+                "cohort": "IDVA Dataset (8625 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    8285,
+                    340
+                ],
+                "percents": [
+                    "96.1%",
+                    "3.9%"
+                ],
+                "insight": "Stride Email is heavily used for broad-scale informational messaging, suggesting a key channel for school-wide communication."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "IDVA Dataset (8198 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    8197,
+                    1
+                ],
+                "percents": [
+                    "100.0%",
+                    "0.0%"
+                ],
+                "insight": "Parent Contact activity is high but lacks subtype standardization, limiting downstream analysis of outreach intent."
+            },
+            {
+                "title": "Student Contact messages by subtype",
+                "desc": "Analysis of response states from Student Contact messages",
+                "cohort": "IDVA Dataset (7500 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Strong Start Orient",
+                    "Strong Start Welcome",
+                    "Strong Start: Connec",
+                    "Engagement Event Att",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    3938,
+                    865,
+                    822,
+                    819,
+                    481,
+                    575
+                ],
+                "percents": [
+                    "52.5%",
+                    "11.5%",
+                    "11.0%",
+                    "10.9%",
+                    "6.4%",
+                    "7.7%"
+                ],
+                "insight": "Student outreach is concentrated around onboarding and orientation workflows, indicating strong early-year engagement efforts."
+            },
+            {
+                "title": "Attendance messages by subtype",
+                "desc": "Analysis of response states from Attendance messages",
+                "cohort": "IDVA Dataset (1728 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Attendance Back on T",
+                    "Attendance Progress",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    1313,
+                    251,
+                    149,
+                    15
+                ],
+                "percents": [
+                    "76.0%",
+                    "14.5%",
+                    "8.6%",
+                    "0.9%"
+                ],
+                "insight": "Attendance interventions are targeted and relatively low volume, indicating escalation-based rather than universal usage."
+            },
+            {
+                "title": "Special Programs messages by subtype",
+                "desc": "Analysis of response states from Special Programs messages",
+                "cohort": "IDVA Dataset (1174 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    1174
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Special Programs communication appears highly individualized and compliance-focused, supporting case-management workflows."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                12927,
+                5960,
+                9177,
+                6043,
+                8313,
+                19,
+                211
+            ],
+            "percents": [
+                "30.3%",
+                "14.0%",
+                "21.5%",
+                "14.2%",
+                "19.5%",
+                "0.0%",
+                "0.5%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun"
+            ],
+            "data": [
+                688,
+                5766,
+                4310,
+                2728,
+                2428,
+                1818,
+                2385,
+                3801,
+                5294,
+                6515,
+                5142,
+                1775
+            ],
+            "percents": [
+                "1.6%",
+                "13.5%",
+                "10.1%",
+                "6.4%",
+                "5.7%",
+                "4.3%",
+                "5.6%",
+                "8.9%",
+                "12.4%",
+                "15.3%",
+                "12.1%",
+                "4.2%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Office",
+                "Stride Email",
+                "Parent Contact",
+                "Student Contact",
+                "Attendance",
+                "Special Programs",
+                "2024 PowerSchool incident",
+                "Re-Registration",
+                "Placement (onboarding)",
+                "Counselor"
+            ],
+            "data": [
+                10.44,
+                6.22,
+                5.91,
+                5.41,
+                1.25,
+                0.85,
+                0.41,
+                0.2,
+                0.02,
+                0.02
+            ],
+            "total": "30.73"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered"
+            ],
+            "data": [
+                5.91
+            ],
+            "total": "5.91"
+        },
+        "uxrInsights": null
+    },
+    "IS_AZ": {
+        "name": "IS_AZ",
+        "subtitle": "IS_AZ (SY25-26)",
+        "population": 40,
+        "totalMessagesNum": 1537,
+        "logTypes": [
+            {
+                "label": "Parent Contact",
+                "volume": 748,
+                "percent": "48.7%"
+            },
+            {
+                "label": "Stride Email",
+                "volume": 336,
+                "percent": "21.9%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 236,
+                "percent": "15.4%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 97,
+                "percent": "6.3%"
+            },
+            {
+                "label": "Office",
+                "volume": 75,
+                "percent": "4.9%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 29,
+                "percent": "1.9%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 15,
+                "percent": "1.0%"
+            },
+            {
+                "label": "Placement (onboarding)",
+                "volume": 1,
+                "percent": "0.1%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "IS_AZ Dataset (748 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "No Connection",
+                    "Made Connection",
+                    "Connection Attempt P"
+                ],
+                "dataPoints": [
+                    349,
+                    276,
+                    114,
+                    9
+                ],
+                "percents": [
+                    "46.7%",
+                    "36.9%",
+                    "15.2%",
+                    "1.2%"
+                ],
+                "insight": "Parent Contact is the dominant channel, representing nearly half of all outreach and showing a strong emphasis on direct family engagement attempts."
+            },
+            {
+                "title": "Stride Email messages by subtype",
+                "desc": "Analysis of response states from Stride Email messages",
+                "cohort": "IS_AZ Dataset (336 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    336
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Stride Email serves as the primary mass-communication mechanism for reminders, announcements, and academic updates."
+            },
+            {
+                "title": "Student Contact messages by subtype",
+                "desc": "Analysis of response states from Student Contact messages",
+                "cohort": "IS_AZ Dataset (236 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Made Connection",
+                    "No Connection",
+                    "GradPlan Conf Spring",
+                    "GradPlan Conf Fall"
+                ],
+                "dataPoints": [
+                    90,
+                    54,
+                    44,
+                    28,
+                    16
+                ],
+                "percents": [
+                    "38.1%",
+                    "22.9%",
+                    "18.6%",
+                    "11.9%",
+                    "6.8%"
+                ],
+                "insight": "Student outreach balances engagement monitoring with graduation planning and support conversations."
+            },
+            {
+                "title": "Special Programs messages by subtype",
+                "desc": "Analysis of response states from Special Programs messages",
+                "cohort": "IS_AZ Dataset (97 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    97
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Special Programs communication reflects ongoing compliance, IEP, and meeting-notice workflows."
+            },
+            {
+                "title": "Office messages by subtype",
+                "desc": "Analysis of response states from Office messages",
+                "cohort": "IS_AZ Dataset (75 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    75
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Office communications are concentrated around report cards, records, and administrative requirements."
+            },
+            {
+                "title": "Counselor messages by subtype",
+                "desc": "Analysis of response states from Counselor messages",
+                "cohort": "IS_AZ Dataset (29 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    29
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Counselor interactions are targeted and low volume, focusing on referrals, outreach, and student support."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                222,
+                301,
+                409,
+                320,
+                261,
+                21,
+                3
+            ],
+            "percents": [
+                "14.4%",
+                "19.6%",
+                "26.6%",
+                "20.8%",
+                "17.0%",
+                "1.4%",
+                "0.2%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                50,
+                102,
+                111,
+                76,
+                56,
+                102,
+                228,
+                140,
+                136,
+                186,
+                252
+            ],
+            "percents": [
+                "3.3%",
+                "6.6%",
+                "7.2%",
+                "4.9%",
+                "3.6%",
+                "6.6%",
+                "14.8%",
+                "9.1%",
+                "8.8%",
+                "12.1%",
+                "16.4%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Parent Contact",
+                "Stride Email",
+                "Student Contact",
+                "Special Programs",
+                "Office",
+                "Counselor",
+                "Re-Registration",
+                "Placement (onboarding)"
+            ],
+            "data": [
+                18.7,
+                8.4,
+                5.9,
+                2.42,
+                1.88,
+                0.72,
+                0.38,
+                0.03
+            ],
+            "total": "38.43"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered",
+                "No Connection",
+                "Made Connection",
+                "Connection Attempt P"
+            ],
+            "data": [
+                8.72,
+                6.9,
+                2.85,
+                0.22
+            ],
+            "total": "18.70"
+        },
+        "uxrInsights": null
+    },
+    "KYVA": {
+        "name": "KYVA",
+        "subtitle": "KYVA (SY25-26)",
+        "population": 404,
+        "totalMessagesNum": 59907,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 55354,
+                "percent": "92.4%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 1975,
+                "percent": "3.3%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 1526,
+                "percent": "2.5%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 863,
+                "percent": "1.4%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 90,
+                "percent": "0.2%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 40,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 22,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Grade Change",
+                "volume": 20,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Placement (onboarding)",
+                "volume": 15,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Testing",
+                "volume": 1,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Health",
+                "volume": 1,
+                "percent": "0.0%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Attendance messages by subtype",
+                "desc": "Analysis of response states from Attendance messages",
+                "cohort": "KYVA Dataset (1526 messages)",
+                "labels": [
+                    "Attendance Warning-3",
+                    "Attendance Warning-5",
+                    "Attendance Warning-7",
+                    "Attendance Warning-1",
+                    "Attendance Warning-8",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    648,
+                    318,
+                    190,
+                    168,
+                    98,
+                    104
+                ],
+                "percents": [
+                    "42.5%",
+                    "20.8%",
+                    "12.5%",
+                    "11.0%",
+                    "6.4%",
+                    "6.8%"
+                ],
+                "insight": "Attendance outreach is heavily concentrated in escalation-based warning communications, indicating a structured intervention process."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "KYVA Dataset (1975 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Enduring Connect Call",
+                    "Advocacy: Ad Hoc",
+                    "Advoc: Connect Call",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    1138,
+                    375,
+                    272,
+                    190,
+                    0
+                ],
+                "percents": [
+                    "57.6%",
+                    "19.0%",
+                    "13.8%",
+                    "9.6%",
+                    "0.0%"
+                ],
+                "insight": "Most parent outreach lacks subtype classification, reducing visibility into communication intent and outcomes."
+            },
+            {
+                "title": "Student Contact messages by subtype",
+                "desc": "Analysis of response states from Student Contact messages",
+                "cohort": "KYVA Dataset (863 messages)",
+                "labels": [
+                    "Advocacy: Ad Hoc",
+                    "No Subtype Entered",
+                    "Advoc: Connect Call",
+                    "Enduring ConnectCall"
+                ],
+                "dataPoints": [
+                    728,
+                    129,
+                    5,
+                    1
+                ],
+                "percents": [
+                    "84.4%",
+                    "14.9%",
+                    "0.6%",
+                    "0.1%"
+                ],
+                "insight": "Student communications are overwhelmingly ad hoc, suggesting individualized support and intervention activity."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                13539,
+                9206,
+                10938,
+                10856,
+                11146,
+                219,
+                4003
+            ],
+            "percents": [
+                "22.6%",
+                "15.4%",
+                "18.3%",
+                "18.1%",
+                "18.6%",
+                "0.4%",
+                "6.7%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                473,
+                8669,
+                6263,
+                8393,
+                4312,
+                5158,
+                5436,
+                6397,
+                6772,
+                3437,
+                4595
+            ],
+            "percents": [
+                "0.8%",
+                "14.5%",
+                "10.5%",
+                "14.0%",
+                "7.2%",
+                "8.6%",
+                "9.1%",
+                "10.7%",
+                "11.3%",
+                "5.7%",
+                "7.7%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Attendance",
+                "Student Contact",
+                "Counselor",
+                "Special Programs",
+                "Discipline",
+                "Grade Change",
+                "Placement (onboarding)",
+                "Testing",
+                "Health"
+            ],
+            "data": [
+                137.01,
+                4.89,
+                3.78,
+                2.14,
+                0.22,
+                0.1,
+                0.05,
+                0.05,
+                0.04,
+                0,
+                0
+            ],
+            "total": "148.28"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered",
+                "Enduring Connect Call",
+                "Advocacy: Ad Hoc",
+                "Advoc: Connect Call"
+            ],
+            "data": [
+                2.82,
+                0.93,
+                0.67,
+                0.47
+            ],
+            "total": "4.89"
+        },
+        "uxrInsights": null
+    },
+    "MNVA": {
+        "name": "MNVA",
+        "subtitle": "MNVA (SY25-26)",
+        "population": 1657,
+        "totalMessagesNum": 36663,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 36366,
+                "percent": "99.2%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 128,
+                "percent": "0.3%"
+            },
+            {
+                "label": "Historical Program Note",
+                "volume": 94,
+                "percent": "0.3%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 40,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Historical Notes",
+                "volume": 22,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 5,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 3,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 2,
+                "percent": "0.0%"
+            },
+            {
+                "label": "2024 PowerSchool incident",
+                "volume": 2,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Office",
+                "volume": 1,
+                "percent": "0.0%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Stride Email messages by subtype",
+                "desc": "Analysis of response states from Stride Email messages",
+                "cohort": "MNVA Dataset (36366 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    36365,
+                    1
+                ],
+                "percents": [
+                    "100.0%",
+                    "0.0%"
+                ],
+                "insight": "Stride Email overwhelmingly dominates communication volume, indicating schoolwide outreach is primarily delivered through mass email campaigns."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "MNVA Dataset (128 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    128
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Parent Contact activity is very limited relative to mass communications, suggesting personalized outreach is reserved for specific intervention cases."
+            },
+            {
+                "title": "Historical Program Note messages by subtype",
+                "desc": "Analysis of response states from Historical Program Note messages",
+                "cohort": "MNVA Dataset (94 messages)",
+                "labels": [
+                    "No Subtype Entered"
+                ],
+                "dataPoints": [
+                    94
+                ],
+                "percents": [
+                    "100.0%"
+                ],
+                "insight": "Historical Program Notes appear to be used primarily for recordkeeping rather than active engagement."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                23804,
+                3027,
+                894,
+                4900,
+                3937,
+                2,
+                99
+            ],
+            "percents": [
+                "64.9%",
+                "8.3%",
+                "2.4%",
+                "13.4%",
+                "10.7%",
+                "0.0%",
+                "0.3%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                2,
+                3,
+                1768,
+                3400,
+                2911,
+                2255,
+                6003,
+                2511,
+                4317,
+                8136,
+                5241
+            ],
+            "percents": [
+                "0.0%",
+                "0.0%",
+                "4.8%",
+                "9.3%",
+                "7.9%",
+                "6.2%",
+                "16.4%",
+                "6.8%",
+                "11.8%",
+                "22.2%",
+                "14.3%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Historical Program Note",
+                "Counselor",
+                "Historical Notes",
+                "Student Contact",
+                "Attendance",
+                "Special Programs",
+                "2024 PowerSchool incident",
+                "Office"
+            ],
+            "data": [
+                21.95,
+                0.08,
+                0.06,
+                0.02,
+                0.01,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "total": "22.12"
+        },
+        "uxrInsights": null
+    },
+    "MVCA": {
+        "name": "MVCA",
+        "subtitle": "MVCA (SY25-26)",
+        "population": 1698,
+        "totalMessagesNum": 52404,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 45127,
+                "percent": "86.1%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 3509,
+                "percent": "6.7%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 1845,
+                "percent": "3.5%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 1562,
+                "percent": "3.0%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 260,
+                "percent": "0.5%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 37,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Office",
+                "volume": 23,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Testing",
+                "volume": 23,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 9,
+                "percent": "0.0%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 5,
+                "percent": "0.0%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "MVCA Dataset (3509 messages)",
+                "labels": [
+                    "",
+                    "Withdrawal for Truan",
+                    "No Subtype Entered",
+                    "Missed Class",
+                    "Strong Start: Connec"
+                ],
+                "dataPoints": [
+                    3489,
+                    8,
+                    7,
+                    4,
+                    1
+                ],
+                "percents": [
+                    "99.4%",
+                    "0.2%",
+                    "0.2%",
+                    "0.1%",
+                    "0.0%"
+                ],
+                "insight": "Parent Contact activity is overwhelmingly concentrated in a single outreach subtype, indicating a highly standardized parent communication workflow."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                11944,
+                11261,
+                8277,
+                8634,
+                11215,
+                357,
+                716
+            ],
+            "percents": [
+                "22.8%",
+                "21.5%",
+                "15.8%",
+                "16.5%",
+                "21.4%",
+                "0.7%",
+                "1.4%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun"
+            ],
+            "data": [
+                116,
+                3613,
+                10088,
+                5326,
+                1806,
+                4178,
+                6990,
+                6725,
+                3446,
+                4370,
+                4185,
+                1561
+            ],
+            "percents": [
+                "0.2%",
+                "6.9%",
+                "19.3%",
+                "10.2%",
+                "3.4%",
+                "8.0%",
+                "13.3%",
+                "12.8%",
+                "6.6%",
+                "8.3%",
+                "8.0%",
+                "3.0%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Attendance",
+                "Student Contact",
+                "Special Programs",
+                "Counselor",
+                "Office",
+                "Testing",
+                "Re-Registration",
+                "Discipline"
+            ],
+            "data": [
+                26.59,
+                2.07,
+                1.09,
+                0.92,
+                0.15,
+                0.02,
+                0.01,
+                0.01,
+                0.01,
+                0
+            ],
+            "total": "30.87"
+        },
+        "lcSubtype": {
+            "labels": [
+                "",
+                "Withdrawal for Truan",
+                "No Subtype Entered",
+                "Missed Class",
+                "Strong Start: Connec"
+            ],
+            "data": [
+                2.06,
+                0,
+                0,
+                0,
+                0
+            ],
+            "total": "2.07"
+        },
+        "uxrInsights": null
+    },
+    "TVAH": {
+        "name": "TVAH",
+        "subtitle": "TVAH (SY25-26)",
+        "population": 268,
+        "totalMessagesNum": 32256,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 21298,
+                "percent": "66.0%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 6063,
+                "percent": "18.8%"
+            },
+            {
+                "label": "Office",
+                "volume": 2196,
+                "percent": "6.8%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 1795,
+                "percent": "5.6%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 385,
+                "percent": "1.2%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 168,
+                "percent": "0.5%"
+            },
+            {
+                "label": "2024 PowerSchool incident",
+                "volume": 167,
+                "percent": "0.5%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 90,
+                "percent": "0.3%"
+            },
+            {
+                "label": "Testing",
+                "volume": 44,
+                "percent": "0.1%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 26,
+                "percent": "0.1%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Stride Email messages by subtype",
+                "desc": "Analysis of response states from Stride Email messages",
+                "cohort": "TVAH Dataset (21298 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Blank/Other",
+                    "ASPIRE - Unsuccessful",
+                    "Student First Login",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    20672,
+                    620,
+                    3,
+                    2,
+                    1
+                ],
+                "percents": [
+                    "97.1%",
+                    "2.9%",
+                    "0.0%",
+                    "0.0%",
+                    "0.0%"
+                ],
+                "insight": "Stride Email overwhelmingly drives outreach volume, indicating a highly broadcast-oriented communication strategy."
+            },
+            {
+                "title": "Student Contact messages by subtype",
+                "desc": "Analysis of response states from Student Contact messages",
+                "cohort": "TVAH Dataset (6063 messages)",
+                "labels": [
+                    "Student Con Unsucces",
+                    "No Subtype Entered",
+                    "Strong Start: Connec",
+                    "Enduring ConnectCall",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    2154,
+                    2102,
+                    1221,
+                    462,
+                    124
+                ],
+                "percents": [
+                    "35.5%",
+                    "34.7%",
+                    "20.1%",
+                    "7.6%",
+                    "2.0%"
+                ],
+                "insight": "A substantial share of student contacts were logged as unsuccessful, highlighting engagement and reachability challenges."
+            },
+            {
+                "title": "Office messages by subtype",
+                "desc": "Analysis of response states from Office messages",
+                "cohort": "TVAH Dataset (2196 messages)",
+                "labels": [
+                    "ASPIRE - Unsuccessful",
+                    "ASPIRE - Successful",
+                    "No Subtype Entered",
+                    "Registrar - LG Student",
+                    "All Others"
+                ],
+                "dataPoints": [
+                    1010,
+                    449,
+                    203,
+                    186,
+                    348
+                ],
+                "percents": [
+                    "46.0%",
+                    "20.4%",
+                    "9.2%",
+                    "8.5%",
+                    "15.8%"
+                ],
+                "insight": "Office communications are heavily concentrated around ASPIRE workflow management and registrar actions."
+            },
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "TVAH Dataset (168 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "Parent Communication",
+                    "SBEC - Laptop Approv"
+                ],
+                "dataPoints": [
+                    119,
+                    47,
+                    2
+                ],
+                "percents": [
+                    "70.8%",
+                    "28.0%",
+                    "1.2%"
+                ],
+                "insight": "Parent Contact records are relatively low-volume but primarily focused on general parent communication."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                6149,
+                6507,
+                6829,
+                6291,
+                5818,
+                177,
+                485
+            ],
+            "percents": [
+                "19.1%",
+                "20.2%",
+                "21.2%",
+                "19.5%",
+                "18.0%",
+                "0.5%",
+                "1.5%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                383,
+                2557,
+                3189,
+                3884,
+                2351,
+                2208,
+                3895,
+                4248,
+                2653,
+                3046,
+                3072
+            ],
+            "percents": [
+                "1.2%",
+                "7.9%",
+                "9.9%",
+                "12.0%",
+                "7.3%",
+                "6.8%",
+                "12.1%",
+                "13.2%",
+                "8.2%",
+                "9.4%",
+                "9.5%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Student Contact",
+                "Office",
+                "Attendance",
+                "Special Programs",
+                "Parent Contact",
+                "2024 PowerSchool incident",
+                "Counselor"
+            ],
+            "data": [
+                79.77,
+                22.71,
+                8.22,
+                6.72,
+                1.44,
+                0.63,
+                0.63,
+                0.34
+            ],
+            "total": "120.46"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered",
+                "Parent Communication",
+                "SBEC - Laptop Approv"
+            ],
+            "data": [
+                0.45,
+                0.18,
+                0.01
+            ],
+            "total": "0.64"
+        },
+        "uxrInsights": null
+    },
+    "WIVA": {
+        "name": "WIVA",
+        "subtitle": "WIVA (SY25-26)",
+        "population": 921,
+        "totalMessagesNum": 32527,
+        "logTypes": [
+            {
+                "label": "Stride Email",
+                "volume": 19179,
+                "percent": "58.96%"
+            },
+            {
+                "label": "Parent Contact",
+                "volume": 6922,
+                "percent": "21.28%"
+            },
+            {
+                "label": "Office",
+                "volume": 2224,
+                "percent": "6.84%"
+            },
+            {
+                "label": "Student Contact",
+                "volume": 1802,
+                "percent": "5.54%"
+            },
+            {
+                "label": "Re-Registration",
+                "volume": 761,
+                "percent": "2.34%"
+            },
+            {
+                "label": "Special Programs",
+                "volume": 735,
+                "percent": "2.26%"
+            },
+            {
+                "label": "Attendance",
+                "volume": 494,
+                "percent": "1.52%"
+            },
+            {
+                "label": "Counselor",
+                "volume": 234,
+                "percent": "0.72%"
+            },
+            {
+                "label": "Testing",
+                "volume": 120,
+                "percent": "0.37%"
+            },
+            {
+                "label": "Discipline",
+                "volume": 31,
+                "percent": "0.10%"
+            },
+            {
+                "label": "Grade Change",
+                "volume": 8,
+                "percent": "0.02%"
+            },
+            {
+                "label": "Historical Notes",
+                "volume": 7,
+                "percent": "0.02%"
+            },
+            {
+                "label": "Placement (onboarding)",
+                "volume": 5,
+                "percent": "0.02%"
+            },
+            {
+                "label": "Health",
+                "volume": 3,
+                "percent": "0.01%"
+            },
+            {
+                "label": "NCoE",
+                "volume": 1,
+                "percent": "0.00%"
+            },
+            {
+                "label": "Secure",
+                "volume": 1,
+                "percent": "0.00%"
+            }
+        ],
+        "dashSubtypesData": [
+            {
+                "title": "Parent Contact messages by subtype",
+                "desc": "Analysis of response states from Parent Contact messages",
+                "cohort": "WIVA Dataset (6922 messages)",
+                "labels": [
+                    "No Subtype Entered",
+                    "-",
+                    "Unsuccessful Endurin"
+                ],
+                "dataPoints": [
+                    6917,
+                    4,
+                    1
+                ],
+                "percents": [
+                    "99.93%",
+                    "0.06%",
+                    "0.01%"
+                ],
+                "insight": "Parent Contact logging is highly standardized, with nearly all records submitted without a subtype, limiting downstream categorization and reporting."
+            }
+        ],
+        "weekday": {
+            "labels": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+            "data": [
+                7170,
+                5770,
+                5643,
+                6456,
+                6706,
+                136,
+                646
+            ],
+            "percents": [
+                "22.04%",
+                "17.74%",
+                "17.35%",
+                "19.85%",
+                "20.62%",
+                "0.42%",
+                "1.99%"
+            ]
+        },
+        "monthly": {
+            "labels": [
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May"
+            ],
+            "data": [
+                1926,
+                1443,
+                6188,
+                5334,
+                1172,
+                1563,
+                2952,
+                3499,
+                1957,
+                2372,
+                3486
+            ],
+            "percents": [
+                "5.92%",
+                "4.44%",
+                "19.02%",
+                "16.40%",
+                "3.60%",
+                "4.81%",
+                "9.08%",
+                "10.76%",
+                "6.02%",
+                "7.29%",
+                "10.72%"
+            ]
+        },
+        "lcAnnual": {
+            "labels": [
+                "Stride Email",
+                "Parent Contact",
+                "Office",
+                "Student Contact",
+                "Re-Registration",
+                "Special Programs",
+                "Attendance",
+                "Counselor",
+                "Testing",
+                "Discipline",
+                "Grade Change",
+                "Historical Notes",
+                "Placement (onboarding)",
+                "Health",
+                "NCoE",
+                "Secure"
+            ],
+            "data": [
+                20.82,
+                7.52,
+                2.41,
+                1.96,
+                0.83,
+                0.8,
+                0.54,
+                0.25,
+                0.13,
+                0.03,
+                0.01,
+                0.01,
+                0.01,
+                0,
+                0,
+                0
+            ],
+            "total": "35.31"
+        },
+        "lcSubtype": {
+            "labels": [
+                "No Subtype Entered",
+                "-",
+                "Unsuccessful Endurin"
+            ],
+            "data": [
+                7.51,
+                0,
+                0
+            ],
+            "total": "7.52"
+        },
+        "uxrInsights": null
+    }
+};
 
         const chartColors = [
             "#1e3a8a", // Dark blue (focal)
@@ -670,13 +3041,12 @@
         ];
 
         let dashSubtypeChartInstance = null;
-        let activeLogTypeIndex = 0;
-        let lockedLogTypeIndex = 0;
-        let currentlyViewingSubtypes = true;
+        let activeLogTypeIndex = -1;
+        let lockedLogTypeIndex = -1;
         let lockedView = "logtype";
         let activeSection = "logtype";
         const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section", "lc-subtype-section"];
-        let activeSchoolKey = "AZVA";
+        let activeSchoolKey = localStorage.getItem("activeSchoolKey") || "AZVA";
 
         function renderLogTypeTable(school) {
             const tbody = document.getElementById("logtype-tbody");
@@ -822,7 +3192,7 @@
             school.lcSubtype.data.forEach((val, idx) => {
                 const label = school.lcSubtype.labels[idx];
                 html += `
-                    <tr class="hover:bg-slate-55 transition-colors">
+                    <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-2 font-medium">${label}</td>
                         <td class="py-2 text-right font-semibold text-slate-955 pr-2" id="lcsubtype-avg-${idx}">${val.toFixed(2)}</td>
                     </tr>
@@ -865,8 +3235,9 @@
 
         function changeSchool(schoolKey) {
             activeSchoolKey = schoolKey;
+            localStorage.setItem("activeSchoolKey", schoolKey);
             renderSchoolData(schoolKey);
-            lockSection(lockedView);
+            lockSection(lockedView.replace("_row", ""));
         }
 
         function updateSectionCardBorders() {
@@ -874,8 +3245,8 @@
                 const card = document.getElementById(id);
                 if (!card) return;
                 
-                let isLocked = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === lockedView);
-                let isActive = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === activeSection);
+                let isLocked = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === lockedView.replace("_row", ""));
+                let isActive = (id.replace("-section", "").replace("log-type", "logtype").replace("weekday-breakdown", "weekday").replace("monthly-breakdown", "monthly").replace("lc-annual", "lc-annual").replace("lc-subtype", "lc-subtype") === activeSection.replace("_row", ""));
                 
                 let classes = "p-4 transition-all duration-300 rounded-xl cursor-pointer " + (id !== "log-type-section" ? "mt-4 " : "");
                 
@@ -903,14 +3274,14 @@
                 let rowClasses = "transition-colors cursor-pointer ";
                 let cellBorderClasses = "border-l-4 ";
                 
-                if (lockedView === "logtype" && i === lockedLogTypeIndex) {
+                if (lockedView === "logtype_row" && i === lockedLogTypeIndex) {
                     cellBorderClasses += "border-slate-500 ";
-                    if (currentlyViewingSubtypes && i === activeLogTypeIndex) {
+                    if (activeSection === "logtype_row" && i === activeLogTypeIndex) {
                         rowClasses += "bg-slate-200 hover:bg-slate-200";
                     } else {
                         rowClasses += "bg-slate-100/70 hover:bg-slate-200/80";
                     }
-                } else if (currentlyViewingSubtypes && i === activeLogTypeIndex) {
+                } else if (activeSection === "logtype_row" && i === activeLogTypeIndex) {
                     cellBorderClasses += "border-slate-300 ";
                     rowClasses += "bg-slate-100/80 hover:bg-slate-100";
                 } else {
@@ -929,10 +3300,11 @@
         function lockSection(sectionName) {
             lockedView = sectionName;
             activeSection = sectionName;
-            currentlyViewingSubtypes = (sectionName === "logtype");
             
             if (sectionName === "logtype") {
-                selectDashSubtype(lockedLogTypeIndex);
+                lockedLogTypeIndex = -1;
+                activeLogTypeIndex = -1;
+                showParentLogTypeChart();
             } else if (sectionName === "weekday") {
                 showWeekdayVolumeChart();
             } else if (sectionName === "monthly") {
@@ -952,25 +3324,181 @@
                 event.stopPropagation();
             }
             lockedLogTypeIndex = index;
-            lockSection("logtype");
+            lockedView = "logtype_row";
+            activeSection = "logtype_row";
+            selectDashSubtype(index);
+            updateSectionCardBorders();
+            updateLogTypeRowStyles();
         }
 
         function previewDashSubtype(index) {
             activeLogTypeIndex = index;
-            activeSection = "logtype";
-            currentlyViewingSubtypes = true;
+            activeSection = "logtype_row";
             selectDashSubtype(index);
             updateSectionCardBorders();
             updateLogTypeRowStyles();
         }
 
         function restoreLockedDashSubtype() {
-            lockSection(lockedView);
+            if (lockedView === "logtype") {
+                lockedLogTypeIndex = -1;
+                activeLogTypeIndex = -1;
+                showParentLogTypeChart();
+            } else if (lockedView === "logtype_row") {
+                activeLogTypeIndex = lockedLogTypeIndex;
+                selectDashSubtype(lockedLogTypeIndex);
+            } else {
+                lockSection(lockedView);
+            }
+            updateSectionCardBorders();
+            updateLogTypeRowStyles();
         }
 
         function clearLogTypeHighlights() {
-            currentlyViewingSubtypes = false;
-            updateLogTypeRowStyles();
+            // Unused in updated lock schema but maintained for API compatibility
+        }
+
+        function getCategoryUXRInsight(school, index, logType) {
+            if (school.uxrInsights && school.uxrInsights[index]) {
+                return school.uxrInsights[index];
+            }
+            const labelLower = logType.label.toLowerCase();
+            const percent = logType.percent;
+            if (labelLower.includes("email")) {
+                return `Stride Email dominates communication volume (${percent}), representing the primary scalable outreach channel for broad-scale alerts.`;
+            }
+            if (labelLower.includes("parent contact")) {
+                return `Parent Contact (${percent}) represents direct relationship-building and targeted intervention touchpoints with families.`;
+            }
+            if (labelLower.includes("student contact")) {
+                return `Student Contact (${percent}) focuses on direct academic counseling, conference checkpoints, and advising engagement.`;
+            }
+            if (labelLower.includes("attendance")) {
+                return `Attendance notifications (${percent}) are structured to track participation issues and progressive truancy warnings.`;
+            }
+            if (labelLower.includes("office")) {
+                return `Office logs (${percent}) capture operational registrar actions, records administration, and enrollment auditing.`;
+            }
+            if (labelLower.includes("special programs")) {
+                return `Special Programs touchpoints (${percent}) support IEP compliance and case-management workflows for targeted populations.`;
+            }
+            if (labelLower.includes("counselor")) {
+                return `Counselor interactions (${percent}) provide selective, high-touch support for student academic planning and social-emotional needs.`;
+            }
+            if (labelLower.includes("historical note")) {
+                return `Historical Note (${percent}) serves as an archival database log rather than an active day-to-day engagement channel.`;
+            }
+            if (labelLower.includes("testing")) {
+                return `Testing communications (${percent}) are episodic and highly event-driven, concentrating around state testing dates.`;
+            }
+            if (labelLower.includes("re-registration")) {
+                return `Re-Registration logs (${percent}) capture end-of-year intent-to-return compliance check-ins.`;
+            }
+            if (labelLower.includes("discipline")) {
+                return `Discipline logs (${percent}) represent rare administrative records documenting student conduct escalations.`;
+            }
+            return `${logType.label} accounts for ${percent} of total outreach activity, supporting targeted administrative or intervention actions.`;
+        }
+
+        function showParentLogTypeChart() {
+            const school = schoolsData[activeSchoolKey];
+            if (!school) return;
+
+            const labels = school.logTypes.map(item => item.label);
+            const dataPoints = school.logTypes.map(item => item.volume);
+            const percents = school.logTypes.map(item => item.percent);
+
+            const cohort = school.name + " Dataset (" + school.totalMessagesNum.toLocaleString() + " messages)";
+            const title = "Messages by Log Type";
+            const desc = "Communication channel distribution mix";
+            
+            let insight = "";
+            const first = school.logTypes[0];
+            const second = school.logTypes[1];
+            if (first && second) {
+                insight = `${first.label} (${first.percent}) and ${second.label} (${second.percent}) represent the vast majority of all logged communication activity.`;
+            } else if (first) {
+                insight = `${first.label} (${first.percent}) represents the dominant logged communication channel.`;
+            } else {
+                insight = "Consolidated breakdown of logged messages across communication channels.";
+            }
+
+            const container = document.getElementById("dashChartContainer");
+            if (container) {
+                container.className = "w-[clamp(16.25rem,100%,34.125rem)] h-[clamp(13.75rem,35vh,27.625rem)] relative flex justify-center md:justify-start";
+            }
+
+            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
+            if (tableWrapper) {
+                tableWrapper.classList.remove("hidden");
+            }
+
+            document.getElementById("dashSubtypeCohort").textContent = cohort;
+            document.getElementById("dashSubtypeTitle").textContent = title;
+            document.getElementById("dashSubtypeDesc").textContent = desc;
+            document.getElementById("dashSubtypeInsight").textContent = insight;
+
+            const table = document.getElementById("dashSubtypeTable");
+            
+            let tableHtml = '<thead>' +
+                '<tr class="border-b border-slate-100 text-slate-500 text-xs font-semibold">' +
+                    '<th class="pb-2 font-semibold text-left">Log Type</th>' +
+                    '<th class="pb-2 font-semibold text-right">Volume</th>' +
+                    '<th class="pb-2 font-semibold text-right">% of messages</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody class="divide-y divide-slate-50 text-xs text-slate-700">';
+            
+            school.logTypes.forEach((item, idx) => {
+                tableHtml += '<tr class="hover:bg-slate-50/50">' +
+                    '<td class="py-2.5 font-medium text-left">' + item.label + '</td>' +
+                    '<td class="py-2.5 text-right text-slate-600">' + item.volume.toLocaleString() + '</td>' +
+                    '<td class="py-2.5 text-right font-bold text-slate-955 pr-2">' + item.percent + '</td>' +
+                '</tr>';
+            });
+            
+            tableHtml += '<tr class="font-bold border-t border-slate-200 bg-slate-50/50">' +
+                '<td class="py-2.5 text-slate-900 text-left">Total</td>' +
+                '<td class="py-2.5 text-right text-slate-900">' + school.totalMessagesNum.toLocaleString() + '</td>' +
+                '<td class="py-2.5 text-right text-slate-955 pr-2">100.0%</td>' +
+            '</tr></tbody>';
+            
+            table.innerHTML = tableHtml;
+
+            const canvas = document.getElementById("dashSubtypeChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+            if (dashSubtypeChartInstance) {
+                dashSubtypeChartInstance.destroy();
+            }
+
+            dashSubtypeChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataPoints,
+                        backgroundColor: chartColors.slice(0, dataPoints.length),
+                        borderWidth: 1.5,
+                        borderColor: "#ffffff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11, weight: "500" },
+                                color: "#334155"
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function selectDashSubtype(index) {
@@ -986,7 +3514,6 @@
             );
 
             if (!data) {
-                // Dynamic fallback for categories lacking raw subtype logs
                 data = {
                     title: logType.label + " messages by subtype",
                     desc: "General communications tracking for " + logType.label,
@@ -994,7 +3521,7 @@
                     labels: ["No Subtype Entered"],
                     dataPoints: [logType.volume],
                     percents: ["100.0%"],
-                    insight: school.uxrInsights && school.uxrInsights[index] ? school.uxrInsights[index] : ("All logged messages under " + logType.label + " are recorded under a single general category.")
+                    insight: getCategoryUXRInsight(school, index, logType)
                 };
             }
 
@@ -1013,7 +3540,7 @@
             document.getElementById("dashSubtypeCohort").textContent = data.cohort;
             document.getElementById("dashSubtypeTitle").textContent = data.title;
             document.getElementById("dashSubtypeDesc").textContent = data.desc;
-            document.getElementById("dashSubtypeInsight").textContent = data.insight;
+            document.getElementById("dashSubtypeInsight").textContent = data.insight || getCategoryUXRInsight(school, index, logType);
 
             const table = document.getElementById("dashSubtypeTable");
             
@@ -1068,7 +3595,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: "bottom",
+                            position: "right",
                             labels: {
                                 boxWidth: 12,
                                 font: { size: 11, weight: "500" },
@@ -1082,8 +3609,8 @@
 
         function showWeekdayVolumeChart() {
             activeSection = "weekday";
-            clearLogTypeHighlights();
             updateSectionCardBorders();
+            updateLogTypeRowStyles();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -1149,8 +3676,8 @@
 
         function showMonthlyVolumeChart() {
             activeSection = "monthly";
-            clearLogTypeHighlights();
             updateSectionCardBorders();
+            updateLogTypeRowStyles();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -1217,10 +3744,11 @@
             });
         }
 
+        // Trigger default view on load
         function showLCAnnualChart() {
             activeSection = "lc-annual";
-            clearLogTypeHighlights();
             updateSectionCardBorders();
+            updateLogTypeRowStyles();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -1282,8 +3810,8 @@
 
         function showLCSubtypeChart() {
             activeSection = "lc-subtype";
-            clearLogTypeHighlights();
             updateSectionCardBorders();
+            updateLogTypeRowStyles();
             const container = document.getElementById("dashChartContainer");
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
@@ -1343,13 +3871,25 @@
             });
         }
 
-        // Trigger default view on load
+        function populateSchoolDropdown() {
+            const selectEl = document.getElementById("school-select");
+            if (!selectEl) return;
+            const sortedKeys = Object.keys(schoolsData).sort();
+            let html = "";
+            sortedKeys.forEach(key => {
+                const selectedAttr = (key === activeSchoolKey) ? "selected" : "";
+                html += `<option value="${key}" ${selectedAttr}>${key}</option>`;
+            });
+            selectEl.innerHTML = html;
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
+            populateSchoolDropdown();
             renderSchoolData(activeSchoolKey);
             lockSection("logtype");
         });
 
-        // Immediately execute in case DOMContentLoaded has already fired
+        populateSchoolDropdown();
         renderSchoolData(activeSchoolKey);
         lockSection("logtype");
 </script>
