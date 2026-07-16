@@ -249,25 +249,7 @@
                             </div>
                         </div>
 
-                        <!-- Part 6: Learning Coach subtype messages Breakdown -->
-                        <div class="cursor-pointer bg-slate-50/70 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm p-4 transition-all duration-300 rounded-xl mt-4"
-                            id="lc-subtype-section" onmouseenter="showLCSubtypeChart();" onclick="lockSection('lc-subtype')">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Average LC
-                                    messages by subtype</h4>
-                            </div>
-                            <div class="overflow-x-auto max-w-md">
-                                <table class="w-full text-left text-xs border-collapse">
-                                    <thead>
-                                        <tr class="border-b border-slate-200 text-slate-500 font-semibold">
-                                            <th class="pb-2 font-semibold">Subtype</th>
-                                            <th class="pb-2 font-semibold text-right">Avg. Messages / Year</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="lcsubtype-tbody" class="divide-y divide-slate-50 text-slate-700"><!-- Populated dynamically -->
-                                </table>
-                            </div>
-                        </div>
+
                     </div>
 
                     <!-- Right Pane: Dynamic Subtype Breakdown -->
@@ -3045,7 +3027,7 @@
         let lockedLogTypeIndex = -1;
         let lockedView = "logtype";
         let activeSection = "logtype";
-        const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section", "lc-subtype-section"];
+        const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section"];
         let activeSchoolKey = localStorage.getItem("activeSchoolKey") || "AZVA";
 
         function renderLogTypeTable(school) {
@@ -3184,30 +3166,7 @@
             tbody.innerHTML = html;
         }
 
-        function renderLCSubtypeTable(school) {
-            const tbody = document.getElementById("lcsubtype-tbody");
-            if (!tbody) return;
-            
-            let html = "";
-            school.lcSubtype.data.forEach((val, idx) => {
-                const label = school.lcSubtype.labels[idx];
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="py-2 font-medium">${label}</td>
-                        <td class="py-2 text-right font-semibold text-slate-955 pr-2" id="lcsubtype-avg-${idx}">${val.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                <tr class="font-bold border-t-2 border-slate-200 bg-slate-50/50">
-                    <td class="py-2 font-bold text-slate-900 pl-2">Total Average</td>
-                    <td class="py-2 text-right text-slate-955 font-bold pr-2" id="lcsubtype-total-avg">${parseFloat(school.lcSubtype.total).toFixed(2)}</td>
-                </tr>
-            `;
-            
-            tbody.innerHTML = html;
-        }
+
 
         function renderSchoolData(schoolKey) {
             const school = schoolsData[schoolKey];
@@ -3230,7 +3189,6 @@
             renderWeekdayTable(school);
             renderMonthlyTable(school);
             renderLCAnnualTable(school);
-            renderLCSubtypeTable(school);
         }
 
         function changeSchool(schoolKey) {
@@ -3311,8 +3269,6 @@
                 showMonthlyVolumeChart();
             } else if (sectionName === "lc-annual") {
                 showLCAnnualChart();
-            } else if (sectionName === "lc-subtype") {
-                showLCSubtypeChart();
             }
             
             updateSectionCardBorders();
@@ -3808,68 +3764,7 @@
             });
         }
 
-        function showLCSubtypeChart() {
-            activeSection = "lc-subtype";
-            updateSectionCardBorders();
-            updateLogTypeRowStyles();
-            const container = document.getElementById("dashChartContainer");
-            if (container) {
-                container.className = "h-52 w-full relative flex justify-center";
-            }
-            const school = schoolsData[activeSchoolKey];
-            document.getElementById("dashSubtypeCohort").textContent = "Population: " + school.population.toLocaleString() + " Learning Coaches";
-            document.getElementById("dashSubtypeTitle").textContent = "Learning Coach subtype messages";
-            document.getElementById("dashSubtypeDesc").textContent = "Average annual subtype parent connection states experienced by a single Learning Coach";
-            
-            const lcSubData = school.lcSubtype.data;
-            const successVal = lcSubData[2] !== undefined ? lcSubData[2] : 0;
-            let otherSum = 0;
-            lcSubData.forEach((val, idx) => {
-                if (idx !== 2) otherSum += val;
-            });
-            document.getElementById("dashSubtypeInsight").textContent = "Successful contacts (Made Connection, " + successVal.toFixed(2) + "/year) are significantly lower than failed attempts and administrative notifications (Other categories combined, " + otherSum.toFixed(2) + "/year).";
 
-            const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
-            if (tableWrapper) {
-                tableWrapper.classList.add("hidden");
-            }
-
-            const canvas = document.getElementById("dashSubtypeChart");
-            if (!canvas) return;
-
-            const ctx = canvas.getContext("2d");
-            if (dashSubtypeChartInstance) {
-                dashSubtypeChartInstance.destroy();
-            }
-
-            dashSubtypeChartInstance = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: school.lcSubtype.labels,
-                    datasets: [{
-                        label: "Avg. Messages / Year",
-                        data: lcSubData,
-                        backgroundColor: chartColors.slice(0, lcSubData.length),
-                        borderRadius: 4,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9 } } },
-                        y: {
-                            grid: { color: '#f1f5f9' },
-                            ticks: { color: '#64748b', font: { size: 10 } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
 
         function populateSchoolDropdown() {
             const selectEl = document.getElementById("school-select");
