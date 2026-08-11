@@ -3009,6 +3009,191 @@
     }
 };
 
+        // ----------------------------------------------------
+        // Timeline Standardization & Dynamic Aggregation
+        // ----------------------------------------------------
+        const standardMonths = [
+            "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025", "Nov 2025", "Dec 2025",
+            "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026", "Jul 2026"
+        ];
+
+        function getStandardMonthLabel(rawLabel) {
+            const raw = rawLabel.trim();
+            if (raw.startsWith("Jul")) {
+                return raw.includes("26") ? "Jul 2026" : "Jul 2025";
+            }
+            if (raw.startsWith("Aug")) return "Aug 2025";
+            if (raw.startsWith("Sep")) return "Sep 2025";
+            if (raw.startsWith("Oct")) return "Oct 2025";
+            if (raw.startsWith("Nov")) return "Nov 2025";
+            if (raw.startsWith("Dec")) return "Dec 2025";
+            if (raw.startsWith("Jan")) return "Jan 2026";
+            if (raw.startsWith("Feb")) return "Feb 2026";
+            if (raw.startsWith("Mar")) return "Mar 2026";
+            if (raw.startsWith("Apr")) return "Apr 2026";
+            if (raw.startsWith("May")) return "May 2026";
+            if (raw.startsWith("Jun")) return "Jun 2026";
+            return raw;
+        }
+
+        // Standardize monthly timeline for every individual school
+        Object.keys(schoolsData).forEach(key => {
+            const school = schoolsData[key];
+            if (!school.monthly) return;
+
+            const stdData = new Array(standardMonths.length).fill(0);
+            school.monthly.labels.forEach((lbl, idx) => {
+                const stdLbl = getStandardMonthLabel(lbl);
+                const stdIdx = standardMonths.indexOf(stdLbl);
+                if (stdIdx !== -1) {
+                    stdData[stdIdx] = school.monthly.data[idx];
+                }
+            });
+
+            school.monthly.labels = standardMonths;
+            school.monthly.data = stdData;
+
+            const total = stdData.reduce((a, b) => a + b, 0);
+            school.monthly.percents = stdData.map(val => total > 0 ? ((val / total) * 100).toFixed(1) + "%" : "0.0%");
+        });
+
+        // Build the aggregated "ALL" dataset
+        const allSchoolData = {
+            name: "All Schools",
+            subtitle: "SY25-26",
+            population: 0,
+            totalMessagesNum: 0,
+            logTypes: [],
+            dashSubtypesData: [],
+            weekday: {
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                data: [0, 0, 0, 0, 0, 0, 0],
+                percents: []
+            },
+            monthly: {
+                labels: standardMonths,
+                data: new Array(standardMonths.length).fill(0),
+                percents: []
+            },
+            lcAnnual: {
+                labels: [],
+                data: [],
+                total: 0
+            }
+        };
+
+        Object.keys(schoolsData).forEach(key => {
+            const school = schoolsData[key];
+            allSchoolData.totalMessagesNum += school.totalMessagesNum;
+            allSchoolData.population += school.population;
+
+            // Sum weekday
+            school.weekday.data.forEach((val, idx) => {
+                allSchoolData.weekday.data[idx] += val;
+            });
+
+            // Sum monthly
+            school.monthly.data.forEach((val, idx) => {
+                allSchoolData.monthly.data[idx] += val;
+            });
+        });
+
+        // Recalculate weekday percents
+        const weekdayTotal = allSchoolData.weekday.data.reduce((a, b) => a + b, 0);
+        allSchoolData.weekday.percents = allSchoolData.weekday.data.map(val => weekdayTotal > 0 ? ((val / weekdayTotal) * 100).toFixed(1) + "%" : "0.0%");
+
+        // Recalculate monthly percents
+        const monthlyTotal = allSchoolData.monthly.data.reduce((a, b) => a + b, 0);
+        allSchoolData.monthly.percents = allSchoolData.monthly.data.map(val => monthlyTotal > 0 ? ((val / monthlyTotal) * 100).toFixed(1) + "%" : "0.0%");
+
+        // Aggregate logTypes
+        const logTypeMap = {};
+        Object.keys(schoolsData).forEach(key => {
+            const school = schoolsData[key];
+            school.logTypes.forEach(lt => {
+                if (!logTypeMap[lt.label]) {
+                    logTypeMap[lt.label] = 0;
+                }
+                logTypeMap[lt.label] += lt.volume;
+            });
+        });
+
+        const sortedLogTypes = Object.keys(logTypeMap).map(label => {
+            const vol = logTypeMap[label];
+            return {
+                label: label,
+                volume: vol,
+                percent: allSchoolData.totalMessagesNum > 0 ? ((vol / allSchoolData.totalMessagesNum) * 100).toFixed(1) + "%" : "0.0%"
+            };
+        }).sort((a, b) => b.volume - a.volume);
+
+        allSchoolData.logTypes = sortedLogTypes;
+
+        // Recalculate lcAnnual averages
+        allSchoolData.lcAnnual = {
+            labels: sortedLogTypes.map(lt => lt.label),
+            data: sortedLogTypes.map(lt => parseFloat((lt.volume / allSchoolData.population).toFixed(2))),
+            total: (allSchoolData.totalMessagesNum / allSchoolData.population).toFixed(2)
+        };
+
+        // Register ALL key
+        schoolsData["ALL"] = allSchoolData;
+
+        // Helper to aggregate subtypes dynamically for "ALL" view
+        function getAggregatedSubtypes(label) {
+            const labelLower = label.toLowerCase();
+            const subtypeMap = {};
+            let totalSubtypeVolume = 0;
+            
+            Object.keys(schoolsData).forEach(key => {
+                if (key === "ALL") return;
+                const school = schoolsData[key];
+                let data = school.dashSubtypesData.find(d => 
+                    d.title.toLowerCase().includes(labelLower) ||
+                    labelLower.includes(d.title.toLowerCase().replace(" messages by subtype", ""))
+                );
+                
+                if (data) {
+                    data.labels.forEach((subLabel, idx) => {
+                        if (!subtypeMap[subLabel]) {
+                            subtypeMap[subLabel] = 0;
+                        }
+                        subtypeMap[subLabel] += data.dataPoints[idx];
+                        totalSubtypeVolume += data.dataPoints[idx];
+                    });
+                } else {
+                    const logType = school.logTypes.find(lt => lt.label.toLowerCase() === labelLower);
+                    if (logType) {
+                        const subLabel = "No Subtype Entered";
+                        if (!subtypeMap[subLabel]) {
+                            subtypeMap[subLabel] = 0;
+                        }
+                        subtypeMap[subLabel] += logType.volume;
+                        totalSubtypeVolume += logType.volume;
+                    }
+                }
+            });
+            
+            const sortedSubtypes = Object.keys(subtypeMap).map(subLabel => {
+                const vol = subtypeMap[subLabel];
+                return {
+                    label: subLabel,
+                    volume: vol,
+                    percent: totalSubtypeVolume > 0 ? ((vol / totalSubtypeVolume) * 100).toFixed(1) + "%" : "0.0%"
+                };
+            }).sort((a, b) => b.volume - a.volume);
+            
+            return {
+                title: label + " messages by subtype",
+                desc: "Aggregated response states across all schools",
+                cohort: "All Schools (" + totalSubtypeVolume.toLocaleString() + " messages)",
+                labels: sortedSubtypes.map(s => s.label),
+                dataPoints: sortedSubtypes.map(s => s.volume),
+                percents: sortedSubtypes.map(s => s.percent),
+                insight: "Consolidated subtype breakdown across all 10 participating schools."
+            };
+        }
+
         const chartColors = [
             "#1e3a8a", // Dark blue (focal)
             "#2563eb", // Royal blue
@@ -3028,7 +3213,7 @@
         let lockedView = "logtype";
         let activeSection = "logtype";
         const sectionIds = ["log-type-section", "weekday-breakdown-section", "monthly-breakdown-section", "lc-annual-section"];
-        let activeSchoolKey = localStorage.getItem("activeSchoolKey") || "AZVA";
+        let activeSchoolKey = localStorage.getItem("activeSchoolKey") || "ALL";
 
         function renderLogTypeTable(school) {
             const tbody = document.getElementById("logtype-tbody");
@@ -3463,11 +3648,16 @@
             const logType = school.logTypes[index];
             if (!logType) return;
 
-            const labelLower = logType.label.toLowerCase();
-            let data = school.dashSubtypesData.find(d => 
-                d.title.toLowerCase().includes(labelLower) ||
-                labelLower.includes(d.title.toLowerCase().replace(" messages by subtype", ""))
-            );
+            let data;
+            if (activeSchoolKey === "ALL") {
+                data = getAggregatedSubtypes(logType.label);
+            } else {
+                const labelLower = logType.label.toLowerCase();
+                data = school.dashSubtypesData.find(d => 
+                    d.title.toLowerCase().includes(labelLower) ||
+                    labelLower.includes(d.title.toLowerCase().replace(" messages by subtype", ""))
+                );
+            }
 
             if (!data) {
                 data = {
@@ -3769,11 +3959,13 @@
         function populateSchoolDropdown() {
             const selectEl = document.getElementById("school-select");
             if (!selectEl) return;
-            const sortedKeys = Object.keys(schoolsData).sort();
+            const sortedKeys = Object.keys(schoolsData).filter(key => key !== "ALL").sort();
+            sortedKeys.unshift("ALL"); // Prepend All Schools
             let html = "";
             sortedKeys.forEach(key => {
+                const label = key === "ALL" ? "All Schools" : key;
                 const selectedAttr = (key === activeSchoolKey) ? "selected" : "";
-                html += `<option value="${key}" ${selectedAttr}>${key}</option>`;
+                html += `<option value="${key}" ${selectedAttr}>${label}</option>`;
             });
             selectEl.innerHTML = html;
         }
@@ -3781,12 +3973,12 @@
         document.addEventListener("DOMContentLoaded", () => {
             populateSchoolDropdown();
             renderSchoolData(activeSchoolKey);
-            lockSection("logtype");
+            lockSection("monthly");
         });
 
         populateSchoolDropdown();
         renderSchoolData(activeSchoolKey);
-        lockSection("logtype");
+        lockSection("monthly");
 </script>
 </body>
 
