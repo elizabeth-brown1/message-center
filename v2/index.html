@@ -3761,9 +3761,9 @@
             if (container) {
                 container.className = "h-52 w-full relative flex justify-center";
             }
-            document.getElementById("dashSubtypeCohort").textContent = schoolsData[activeSchoolKey].name + " Dataset (" + schoolsData[activeSchoolKey].totalMessagesNum.toLocaleString() + " messages)";
-            document.getElementById("dashSubtypeTitle").textContent = "Weekday Messages Profile";
-            document.getElementById("dashSubtypeDesc").textContent = "Logged messages mapped across the weekly cycle";
+            document.getElementById("dashSubtypeCohort").textContent = activeSchoolKey === "ALL" ? "All Schools" : schoolsData[activeSchoolKey].name;
+            document.getElementById("dashSubtypeTitle").textContent = "Messages by Day";
+            document.getElementById("dashSubtypeDesc").textContent = "";
             document.getElementById("dashSubtypeInsight").textContent = "Message volume peaks heavily during midweek checkpoints (Tuesday/Thursday) to reconcile student status messages prior to weekly progress reporting closures.";
 
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
@@ -3783,6 +3783,27 @@
             const maxVal = Math.max(...weekdayData);
             const peakIdx = weekdayData.indexOf(maxVal);
 
+            const customBarDataLabelsPlugin = {
+                id: 'customBarDataLabels',
+                afterDatasetsDraw(chart) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    ctx.font = "bold 11px 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+                    ctx.fillStyle = '#1e3a8a';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+
+                    const meta = chart.getDatasetMeta(0);
+                    meta.data.forEach((element, index) => {
+                        const value = data.datasets[0].data[index];
+                        const x = element.x;
+                        const y = element.y;
+                        ctx.fillText(value.toLocaleString(), x, y - 5);
+                    });
+                    ctx.restore();
+                }
+            };
+
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "bar",
                 data: {
@@ -3790,11 +3811,7 @@
                     datasets: [{
                         label: "Messages Volume",
                         data: weekdayData,
-                        backgroundColor: weekdayData.map((val, idx) => {
-                            if (idx === peakIdx) return "#2563eb"; // Royal blue peak
-                            if (idx >= 5) return "#cbd5e1"; // Light grey for weekends
-                            return "#1e3a8a"; // Dark blue
-                        }),
+                        backgroundColor: "#1e3a8a",
                         borderRadius: 4,
                         borderWidth: 0
                     }]
@@ -3803,12 +3820,26 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: '#334155',
+                                font: { 
+                                    size: 11,
+                                    family: "'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                                    weight: "500"
+                                } 
+                            } 
+                        },
                         y: {
                             grid: { color: '#f1f5f9' },
+                            suggestedMax: Math.max(...weekdayData) * 1.15,
                             ticks: {
-                                color: '#64748b',
-                                font: { size: 10 },
+                                color: '#334155',
+                                font: { 
+                                    size: 11,
+                                    family: "'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+                                },
                                 callback: function (value) { return value.toLocaleString(); }
                             }
                         }
@@ -3816,7 +3847,8 @@
                     plugins: {
                         legend: { display: false }
                     }
-                }
+                },
+                plugins: [customBarDataLabelsPlugin]
             });
         }
 
@@ -3829,9 +3861,9 @@
                 container.className = "h-52 w-full relative flex justify-center";
             }
             const school = schoolsData[activeSchoolKey];
-            document.getElementById("dashSubtypeCohort").textContent = school.name + " Dataset (" + school.totalMessagesNum.toLocaleString() + " messages)";
-            document.getElementById("dashSubtypeTitle").textContent = "Messages by Month Profile";
-            document.getElementById("dashSubtypeDesc").textContent = "Total logged messages tracked chronologically (" + school.monthly.labels[0] + " – " + school.monthly.labels[school.monthly.labels.length - 1] + ")";
+            document.getElementById("dashSubtypeCohort").textContent = activeSchoolKey === "ALL" ? "All Schools" : school.name;
+            document.getElementById("dashSubtypeTitle").textContent = "Messages by Month";
+            document.getElementById("dashSubtypeDesc").textContent = "";
             document.getElementById("dashSubtypeInsight").textContent = "Message surges are driven directly by predictable academic milestones: January semester start audits, March grade checkups, and May credit recovery locks. Staffing load fluctuates heavily with these dates.";
 
             const tableWrapper = document.getElementById("dashSubtypeTableWrapper");
@@ -3847,6 +3879,27 @@
                 dashSubtypeChartInstance.destroy();
             }
 
+            const customDataLabelsPlugin = {
+                id: 'customDataLabels',
+                afterDatasetsDraw(chart) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    ctx.font = "bold 11px 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+                    ctx.fillStyle = '#1e3a8a';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+
+                    const meta = chart.getDatasetMeta(0);
+                    meta.data.forEach((element, index) => {
+                        const value = data.datasets[0].data[index];
+                        const x = element.x;
+                        const y = element.y;
+                        ctx.fillText(value.toLocaleString(), x, y - 8);
+                    });
+                    ctx.restore();
+                }
+            };
+
             dashSubtypeChartInstance = new Chart(ctx, {
                 type: "line",
                 data: {
@@ -3858,11 +3911,11 @@
                         borderColor: "#1e3a8a",
                         borderWidth: 2.5,
                         fill: false,
-                        pointBackgroundColor: "#2563eb",
-                        pointBorderColor: "#ffffff",
-                        pointBorderWidth: 1.5,
-                        pointRadius: 4.5,
-                        pointHoverRadius: 6,
+                        pointStyle: "rect",
+                        pointBackgroundColor: "#1e3a8a",
+                        pointBorderColor: "#1e3a8a",
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
                         tension: 0
                     }]
                 },
@@ -3872,13 +3925,24 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#64748b', font: { size: 10 } }
+                            ticks: { 
+                                color: '#334155',
+                                font: { 
+                                    size: 11,
+                                    family: "'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                                    weight: "500"
+                                } 
+                            }
                         },
                         y: {
                             grid: { color: '#f1f5f9' },
+                            suggestedMax: Math.max(...school.monthly.data) * 1.15,
                             ticks: {
-                                color: '#64748b',
-                                font: { size: 10 },
+                                color: '#334155',
+                                font: { 
+                                    size: 11,
+                                    family: "'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+                                },
                                 callback: function (value) { return value.toLocaleString(); }
                             }
                         }
@@ -3886,7 +3950,8 @@
                     plugins: {
                         legend: { display: false }
                     }
-                }
+                },
+                plugins: [customDataLabelsPlugin]
             });
         }
 
